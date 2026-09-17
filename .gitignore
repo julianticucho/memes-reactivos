@@ -1,4 +1,7 @@
 hitos/
 node_modules/
 dist/
+backend/build/
 .env
+.DS_Store
+*.log
