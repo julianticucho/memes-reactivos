@@ -1,0 +1,4 @@
+hitos/
+node_modules/
+dist/
+.env
