@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import type { Product } from '../types/products'
 
 interface ProductCardProps {
@@ -5,21 +6,26 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
+  const navigate = useNavigate()
+
   return (
-    <div style={{ border: '1px solid #ccc', borderRadius: 4, padding: 16 }}>
-      <h3 style={{ margin: '0 0 4px' }}>{product.name}</h3>
-      <p style={{ margin: '0 0 8px', fontWeight: 'bold' }}>
-        $
-        {product.price.toLocaleString('es-CL')}
-      </p>
-      <p style={{ margin: '0 0 8px', color: '#555' }}>{product.description}</p>
-      <small style={{ color: '#888' }}>
-        {product.seller}
-        {' '}
-        ·
-        {' '}
-        {product.category}
-      </small>
+    <div
+      onClick={() => navigate(`/Product/${product._id}`)}
+      style={{
+        border: '1px solid #ccc',
+        borderRadius: 4,
+        overflow: 'hidden',
+        cursor: 'pointer',
+      }}
+    >
+      <img
+        src={product.image || '/no-image.avif'}
+        alt={product.name}
+        style={{ width: '100%', height: 200, objectFit: 'cover' }}
+      />
+      <div style={{ padding: 12 }}>
+        <h3 style={{ margin: 0 }}>{product.name}</h3>
+      </div>
     </div>
   )
 }
