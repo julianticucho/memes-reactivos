@@ -1,6 +1,11 @@
 import { BrowserRouter, Route, Routes, Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import Products from './pages/Products'
+import Home from './pages/Home'
+import Profile from './pages/Profile'
+import Login from './pages/Login'
+import NewProduct from './pages/NewProduct'
+import ProductDetail from './pages/ProductDetail'
+
 
 function App() {
   const [toast, setToast] = useState<{ message: string, severity: 'success' | 'error' } | null>(null)
@@ -31,7 +36,11 @@ function App() {
       </nav>
       <main style={{ padding: 20, maxWidth: 900, margin: '0 auto' }}>
         <Routes>
-          <Route path="/productos" element={<Products setToast={setToast} />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/Profile" element={<Profile />} />
+          <Route path="/Login" element={<Login />} />
+          <Route path="/Product/New" element={<NewProduct />} />
+          <Route path="/Product/:id" element={<ProductDetail />} />
           <Route path="*" element={<h2>Página no encontrada</h2>} />
         </Routes>
       </main>
