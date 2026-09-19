@@ -35,6 +35,17 @@ app.post("/api/products", (req, res, next) => {
         .catch((error) => next(error))
 })
 
+app.get("/api/products/:id", (req, res, next) => {
+    Product.findById(req.params.id)
+        .then((product) => {
+            if (!product) {
+                return res.status(404).json({ error: "producto no encontrado" })
+            }
+            res.json(product)
+        })
+        .catch((error) => next(error))
+})
+
 const unknownEndpoint = (_req: express.Request, res: express.Response) => {
     res.status(404).send({ error: "unknown endpoint" })
 }

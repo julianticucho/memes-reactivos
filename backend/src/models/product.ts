@@ -51,9 +51,7 @@ const productSchema = new mongoose.Schema({
 
 productSchema.set('toJSON', {
     transform: (_document, returnedObject) => {
-        const { _id, __v, ...rest } = returnedObject
-        void _id
-        void __v
+        const { __v, ...rest } = returnedObject
         return rest
     },
 })
