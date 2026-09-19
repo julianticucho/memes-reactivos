@@ -23,10 +23,11 @@ const ProductDetail = () => {
   return (
     <>
       <h1>{product.name}</h1>
-      {product.image && (
+      {product.image?.map((img, idx) => (
         <img
-          src={product.image}
-          alt={product.name}
+          key={idx}
+          src={img}
+          alt={`${product.name} ${idx + 1}`}
           style={{
             width: "100%",
             maxHeight: 400,
@@ -34,7 +35,7 @@ const ProductDetail = () => {
             borderRadius: 4,
           }}
         />
-      )}
+      ))}
       <p>{product.description}</p>
       <p>
         <strong>Precio:</strong> ${product.price}

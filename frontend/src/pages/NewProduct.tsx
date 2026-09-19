@@ -63,7 +63,7 @@ const NewProduct = () => {
         price: Number(price),
         seller: seller.trim(),
         category,
-        image: images.length > 0 ? images[selectedIdx] : null,
+        image: images.length > 0 ? images : null,
       })
       .then(() => navigate("/"))
       .catch(() => alert("Error al publicar"));

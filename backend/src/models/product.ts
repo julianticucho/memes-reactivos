@@ -10,7 +10,7 @@ export interface ProductDocument extends mongoose.Document {
     name: string
     description: string
     price: number
-    image: string | null
+    image: string[] | null
     seller: string
     category: string
     createdAt: Date
@@ -36,7 +36,7 @@ const productSchema = new mongoose.Schema({
         min: 0,
     },
     image: {
-        type: String,
+        type: [String],
         default: null,
     },
     seller: {

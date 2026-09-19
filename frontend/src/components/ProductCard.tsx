@@ -19,7 +19,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
       }}
     >
       <img
-        src={product.image || '/no-image.avif'}
+        src={product.image?.[0] || '/no-image.avif'}
         alt={product.name}
         style={{ width: '100%', height: 200, objectFit: 'cover' }}
       />

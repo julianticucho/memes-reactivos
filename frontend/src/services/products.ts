@@ -10,7 +10,7 @@ interface ProductCreateData {
   name: string;
   description: string;
   price: number;
-  image?: string | null;
+  image?: string[] | null;
   seller: string;
   category: string;
 }
