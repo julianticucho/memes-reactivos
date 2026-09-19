@@ -6,3 +6,4 @@ backend/build/
 .DS_Store
 *.log
 AGENTS.md
+.vscode/
