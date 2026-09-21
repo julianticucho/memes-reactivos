@@ -47,10 +47,10 @@ function App() {
       <main style={{ padding: 20, maxWidth: 900, margin: "0 auto" }}>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/Profile" element={<Profile />} />
-          <Route path="/Login" element={<Login />} />
-          <Route path="/Product/New" element={<NewProduct />} />
-          <Route path="/Product/:id" element={<ProductDetail />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/product/new" element={<NewProduct />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="*" element={<h2>Página no encontrada</h2>} />
         </Routes>
       </main>
