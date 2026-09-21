@@ -1,26 +1,35 @@
-import { useState } from 'react'
-import type { Product } from '../types/products'
-import ProductCard from './ProductCard'
+import { useState } from "react";
+import type { Product } from "../types/products";
+import ProductCard from "./ProductCard";
 
-const CATEGORIES = ['Todas', 'Electrónica', 'Ropa', 'Hogar', 'Deportes', 'Libros', 'Otros']
+const CATEGORIES = [
+  "Todas",
+  "Electrónica",
+  "Ropa",
+  "Hogar",
+  "Deportes",
+  "Libros",
+  "Otros",
+];
 
 interface ProductsFinderProps {
-  products: Product[]
+  products: Product[];
 }
 
 const ProductsFinder = ({ products }: ProductsFinderProps) => {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState('Todas')
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("Todas");
 
   const filtered = products.filter((p) => {
-    const matchesName = p.name.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = selectedCategory === 'Todas' || p.category === selectedCategory
-    return matchesName && matchesCategory
-  })
+    const matchesName = p.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      selectedCategory === "Todas" || p.category === selectedCategory;
+    return matchesName && matchesCategory;
+  });
 
   return (
     <>
-      <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
+      <div style={{ display: "flex", gap: 12, marginBottom: 24 }}>
         <input
           type="text"
           placeholder="Buscar por nombre..."
@@ -34,24 +43,32 @@ const ProductsFinder = ({ products }: ProductsFinderProps) => {
           style={{ padding: 8 }}
         >
           {CATEGORIES.map((cat) => (
-            <option key={cat} value={cat}>{cat}</option>
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
           ))}
         </select>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(4, 1fr)",
+          gap: 16,
+        }}
+      >
         <div
-          onClick={() => window.location.href = '/Product/New'}
+          onClick={() => (window.location.href = "/product/new")}
           style={{
-            border: '2px dashed #ccc',
+            border: "2px dashed #ccc",
             borderRadius: 4,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             minHeight: 260,
-            cursor: 'pointer',
+            cursor: "pointer",
             fontSize: 18,
-            color: '#888',
+            color: "#888",
           }}
         >
           + Publicar un producto
@@ -61,7 +78,7 @@ const ProductsFinder = ({ products }: ProductsFinderProps) => {
         ))}
       </div>
     </>
-  )
-}
+  );
+};
 
-export default ProductsFinder
+export default ProductsFinder;

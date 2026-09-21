@@ -27,15 +27,15 @@ const Navbar = ({ user = null }: NavbarProps) => {
           Productos
         </Link>
         <Link
-          to="/Product/New"
+          to="/product/new"
           style={{ color: "#fff", textDecoration: "none" }}
         >
           Publicar
         </Link>
-        <Link to="/Profile" style={{ color: "#fff", textDecoration: "none" }}>
+        <Link to="/profile" style={{ color: "#fff", textDecoration: "none" }}>
           {user ? user.name : "NULL"}
         </Link>
-        <Link to="/Login" style={{ color: "#fff", textDecoration: "none" }}>
+        <Link to="/login" style={{ color: "#fff", textDecoration: "none" }}>
           Iniciar sesión
         </Link>
       </div>
