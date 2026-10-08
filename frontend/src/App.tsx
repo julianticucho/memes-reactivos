@@ -1,21 +1,31 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-import Navbar, { type User } from "./components/Navbar";
+import Navbar from "./components/Navbar";
+import type { User } from "./types/users";
+import authService from "./services/auth";
 
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import NewProduct from "./pages/NewProduct";
 import ProductDetail from "./pages/ProductDetail";
-
-const DEMO_USER: User = { name: "Usuario Ejemplo" };
 
 function App() {
   const [toast, setToast] = useState<{
     message: string;
     severity: "success" | "error";
   } | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [restoring, setRestoring] = useState(true);
+
+  useEffect(() => {
+    authService
+      .restoreLogin()
+      .then(setUser)
+      .finally(() => setRestoring(false));
+  }, []);
 
   useEffect(() => {
     if (toast) {
@@ -43,16 +53,41 @@ function App() {
           {toast.message}
         </div>
       )}
-      <Navbar user={DEMO_USER} />
+      <Navbar user={user} setUser={setUser} />
       <main style={{ padding: 20, maxWidth: 900, margin: "0 auto" }}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/product/new" element={<NewProduct />} />
-          <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="*" element={<h2>Página no encontrada</h2>} />
-        </Routes>
+        {restoring
+          ? (
+              <p>Cargando...</p>
+            )
+          : (
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route
+                  path="/profile"
+                  element={
+                    user ? <Profile user={user} /> : <Navigate to="/login" replace />
+                  }
+                />
+                <Route
+                  path="/login"
+                  element={
+                    user ? <Navigate to="/" replace /> : <Login setUser={setUser} />
+                  }
+                />
+                <Route
+                  path="/register"
+                  element={user ? <Navigate to="/" replace /> : <Register />}
+                />
+                <Route
+                  path="/product/new"
+                  element={
+                    user ? <NewProduct /> : <Navigate to="/login" replace />
+                  }
+                />
+                <Route path="/product/:id" element={<ProductDetail />} />
+                <Route path="*" element={<h2>Página no encontrada</h2>} />
+              </Routes>
+            )}
       </main>
     </BrowserRouter>
   );

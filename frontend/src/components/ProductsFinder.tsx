@@ -22,8 +22,8 @@ const ProductsFinder = ({ products }: ProductsFinderProps) => {
 
   const filtered = products.filter((p) => {
     const matchesName = p.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory =
-      selectedCategory === "Todas" || p.category === selectedCategory;
+    const matchesCategory
+      = selectedCategory === "Todas" || p.category === selectedCategory;
     return matchesName && matchesCategory;
   });
 

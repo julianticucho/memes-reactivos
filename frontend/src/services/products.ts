@@ -1,6 +1,6 @@
 import axios from "axios";
+import axiosSecure from "../utils/axiosSecure";
 import type { Product } from "../types/products";
-
 
 const getAll = async () => {
   return axios.get<Product[]>("/api/products").then((response) => response.data);
@@ -11,12 +11,11 @@ interface ProductCreateData {
   description: string;
   price: number;
   image?: string[] | null;
-  seller: string;
   category: string;
 }
 
 const create = async (data: ProductCreateData) => {
-  return axios
+  return axiosSecure
     .post<Product>("/api/products", data)
     .then((response) => response.data);
 };

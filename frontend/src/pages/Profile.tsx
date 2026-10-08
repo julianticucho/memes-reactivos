@@ -1,24 +1,26 @@
 import { useEffect, useState } from "react";
 import type { Product } from "../types/products";
+import type { User } from "../types/users";
 import productsService from "../services/products";
 import ProductsFinder from "../components/ProductsFinder";
 
-const USER = {
-  name: "Usuario Ejemplo",
-  avatar: null as string | null,
-};
+interface ProfileProps {
+  user: User;
+}
 
-const Profile = () => {
+const Profile = ({ user }: ProfileProps) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     productsService
       .getAll()
-      .then((data) => setProducts(data.filter((p) => p.seller === USER.name)))
+      .then((data) =>
+        setProducts(data.filter((p) => p.seller === user.username)),
+      )
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, []);
+  }, [user.username]);
 
   if (loading) return <p>Cargando...</p>;
 
@@ -33,8 +35,8 @@ const Profile = () => {
         }}
       >
         <img
-          src={USER.avatar || "/no-avatar.png"}
-          alt={USER.name}
+          src="/no-avatar.png"
+          alt={user.username}
           style={{
             width: 64,
             height: 64,
@@ -42,7 +44,10 @@ const Profile = () => {
             objectFit: "cover",
           }}
         />
-        <h1 style={{ margin: 0 }}>{USER.name}</h1>
+        <div>
+          <h1 style={{ margin: 0 }}>{user.username}</h1>
+          <p style={{ margin: "4px 0 0", color: "#666" }}>{user.email}</p>
+        </div>
       </div>
       <h2>Mis productos</h2>
       <ProductsFinder products={products} />

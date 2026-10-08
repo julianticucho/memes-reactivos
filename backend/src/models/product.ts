@@ -13,6 +13,7 @@ export interface ProductDocument extends mongoose.Document {
     image: string[] | null
     seller: string
     category: string
+    user: mongoose.Types.ObjectId | null
     createdAt: Date
     updatedAt: Date
 }
@@ -46,6 +47,11 @@ const productSchema = new mongoose.Schema({
     category: {
         type: String,
         required: true,
+    },
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: null,
     },
 }, { timestamps: true })
 

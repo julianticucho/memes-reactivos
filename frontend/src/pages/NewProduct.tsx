@@ -16,7 +16,6 @@ const NewProduct = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [seller, setSeller] = useState("");
   const [category, setCategory] = useState("");
 
   // Images are base64 data URLs, we save that as a string.
@@ -61,12 +60,15 @@ const NewProduct = () => {
         name: name.trim(),
         description: description.trim(),
         price: Number(price),
-        seller: seller.trim(),
         category,
         image: images.length > 0 ? images : null,
       })
       .then(() => navigate("/"))
-      .catch(() => alert("Error al publicar"));
+      .catch((err) => {
+        const msg
+          = err?.response?.data?.error || "Error al publicar (¿sesión expirada?)";
+        alert(msg);
+      });
   };
 
   const selectedImage = images[selectedIdx] ?? null;
@@ -107,12 +109,6 @@ const NewProduct = () => {
           rows={2}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-        />
-        <input
-          placeholder="Vendedor"
-          required
-          value={seller}
-          onChange={(e) => setSeller(e.target.value)}
         />
         <input
           placeholder="Precio"
