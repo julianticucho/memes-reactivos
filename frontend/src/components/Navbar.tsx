@@ -18,71 +18,29 @@ const Navbar = ({ user, setUser }: NavbarProps) => {
   };
 
   return (
-    <nav
-      style={{
-        padding: "12px 20px",
-        backgroundColor: "#333",
-        color: "#fff",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-      }}
-    >
-      <Link
-        to="/"
-        style={{ color: "#fff", textDecoration: "none", fontWeight: "bold" }}
-      >
-        Marketplace Beauchef
-      </Link>
-      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-        <Link to="/" style={{ color: "#fff", textDecoration: "none" }}>
-          Productos
-        </Link>
-        <Link to="/product/new" style={{ color: "#fff", textDecoration: "none" }}>
-          Publicar
-        </Link>
-        {user
-          ? (
-              <>
-                <Link to="/profile" style={{ color: "#fff", textDecoration: "none" }}>
-                  {user.username}
-                </Link>
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  style={{
-                    backgroundColor: "transparent",
-                    border: "1px solid #fff",
-                    color: "#fff",
-                    padding: "4px 10px",
-                    borderRadius: 4,
-                    cursor: "pointer",
-                  }}
-                >
-                  Cerrar sesión
-                </button>
-              </>
-            )
-          : (
-              <>
-                <Link to="/login" style={{ color: "#fff", textDecoration: "none" }}>
-                  Iniciar sesión
-                </Link>
-                <Link
-                  to="/register"
-                  style={{
-                    color: "#333",
-                    textDecoration: "none",
-                    backgroundColor: "#fff",
-                    padding: "4px 10px",
-                    borderRadius: 4,
-                  }}
-                >
-                  Registrarse
-                </Link>
-              </>
-            )}
-      </div>
+    <nav className="menu-bar">
+      <Link to="/">Productos</Link>
+      <Link to="/product/new">Publicar</Link>
+
+      <span className="menu-spacer" />
+
+      {user
+        ? (
+            <>
+              <Link to="/profile" className="menu-user">
+                {user.username}
+              </Link>
+              <button type="button" onClick={handleLogout}>
+                Cerrar sesión
+              </button>
+            </>
+          )
+        : (
+            <>
+              <Link to="/login">Iniciar sesión</Link>
+              <Link to="/register">Registrarse</Link>
+            </>
+          )}
     </nav>
   );
 };

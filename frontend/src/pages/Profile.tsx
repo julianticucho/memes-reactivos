@@ -26,27 +26,11 @@ const Profile = ({ user }: ProfileProps) => {
 
   return (
     <>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 16,
-          marginBottom: 24,
-        }}
-      >
-        <img
-          src="/no-avatar.png"
-          alt={user.username}
-          style={{
-            width: 64,
-            height: 64,
-            borderRadius: "50%",
-            objectFit: "cover",
-          }}
-        />
+      <div className="profile-header">
+        <img src="/no-avatar.png" alt={user.username} />
         <div>
-          <h1 style={{ margin: 0 }}>{user.username}</h1>
-          <p style={{ margin: "4px 0 0", color: "#666" }}>{user.email}</p>
+          <h1>{user.username}</h1>
+          <p>{user.email}</p>
         </div>
       </div>
       <h2>Mis productos</h2>

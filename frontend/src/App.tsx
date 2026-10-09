@@ -53,42 +53,62 @@ function App() {
           {toast.message}
         </div>
       )}
-      <Navbar user={user} setUser={setUser} />
-      <main style={{ padding: 20, maxWidth: 900, margin: "0 auto" }}>
-        {restoring
-          ? (
-              <p>Cargando...</p>
-            )
-          : (
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route
-                  path="/profile"
-                  element={
-                    user ? <Profile user={user} /> : <Navigate to="/login" replace />
-                  }
-                />
-                <Route
-                  path="/login"
-                  element={
-                    user ? <Navigate to="/" replace /> : <Login setUser={setUser} />
-                  }
-                />
-                <Route
-                  path="/register"
-                  element={user ? <Navigate to="/" replace /> : <Register />}
-                />
-                <Route
-                  path="/product/new"
-                  element={
-                    user ? <NewProduct /> : <Navigate to="/login" replace />
-                  }
-                />
-                <Route path="/product/:id" element={<ProductDetail />} />
-                <Route path="*" element={<h2>Página no encontrada</h2>} />
-              </Routes>
-            )}
-      </main>
+
+      <div className="window app-window">
+        <div className="title-bar">
+          <div className="title-bar-text">Marketplace Beauchef</div>
+          <div className="title-bar-controls">
+            <button type="button" aria-label="Minimize" />
+            <button type="button" aria-label="Maximize" />
+            <button type="button" aria-label="Close" />
+          </div>
+        </div>
+
+        <Navbar user={user} setUser={setUser} />
+
+        <div className="window-body">
+          {restoring
+            ? (
+                <p>Cargando...</p>
+              )
+            : (
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route
+                    path="/profile"
+                    element={
+                      user ? <Profile user={user} /> : <Navigate to="/login" replace />
+                    }
+                  />
+                  <Route
+                    path="/login"
+                    element={
+                      user ? <Navigate to="/" replace /> : <Login setUser={setUser} />
+                    }
+                  />
+                  <Route
+                    path="/register"
+                    element={user ? <Navigate to="/" replace /> : <Register />}
+                  />
+                  <Route
+                    path="/product/new"
+                    element={
+                      user ? <NewProduct /> : <Navigate to="/login" replace />
+                    }
+                  />
+                  <Route path="/product/:id" element={<ProductDetail />} />
+                  <Route path="*" element={<h1>Página no encontrada</h1>} />
+                </Routes>
+              )}
+        </div>
+
+        <div className="status-bar">
+          <p className="status-bar-field">
+            {user ? `Conectado como ${user.username}` : "No has iniciado sesión"}
+          </p>
+          <p className="status-bar-field">Marketplace Beauchef</p>
+        </div>
+      </div>
     </BrowserRouter>
   );
 }

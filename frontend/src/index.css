@@ -1,1 +1,209 @@
+/* Orden de capas: 'xp' va despues de 'base' (asi XP.css gana al preflight de
+   Tailwind) pero antes de 'components' y 'utilities' (asi nuestro CSS y las
+   clases de Tailwind siguen pudiendo sobrescribir a XP.css). */
+@layer theme, base, xp, components, utilities;
+
 @import "tailwindcss";
+@import "xp.css/dist/XP.css" layer(xp);
+
+/* XP.css distribuye los tamanios de titulo de su propia pagina de demo
+   (h1: 5rem, h2: 2.5rem, h3: 2rem, h4: 1.5rem). No son parte del look de
+   Windows, asi que los devolvemos al reset de Tailwind. */
+@layer xp {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+}
+
+/* XP.css estiliza los componentes pero no define fondo de pagina:
+   el "escritorio" corre por nuestra cuenta. */
+body {
+  /* El color queda de respaldo mientras carga la imagen o si falla.
+     'fixed' hace que el fondo no se mueva al hacer scroll, como un
+     escritorio de verdad. */
+  background-color: #3a6ea5;
+  background-image: url("/bliss.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
+  padding: 24px 16px;
+}
+
+@layer components {
+  /* ---- Ventana principal de la app ---- */
+  .app-window {
+    max-width: 980px;
+    margin: 0 auto;
+  }
+
+  .app-window .window-body {
+    background: #fff;
+    border: 1px solid #919b9c;
+    margin: 0 3px 3px;
+    padding: 10px;
+  }
+
+  /* ---- Barra de menu (System / Network / Help de XP).
+         XP.css no trae una, asi que la definimos aca. ---- */
+  .menu-bar {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px 4px;
+    margin: 0 3px;
+    background: #fff;
+    border-bottom: 1px solid #d5d2ca;
+    font-size: 11px;
+  }
+
+  .menu-bar a,
+  .menu-bar button {
+    padding: 3px 8px;
+    color: #000;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    font-size: 11px;
+    text-decoration: none;
+    cursor: pointer;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .menu-bar a:hover,
+  .menu-bar button:hover {
+    background: #2a5cdb;
+    color: #fff;
+  }
+
+  .menu-bar .menu-spacer {
+    flex: 1;
+  }
+
+  .menu-bar .menu-user {
+    font-weight: 700;
+  }
+
+  /* ---- Encabezado de seccion: la franja azul de las ventanas XP ---- */
+  .window-body > h1 {
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(180deg, #4a95f5, #1250c8);
+    padding: 4px 8px;
+    margin: -10px -10px 10px;
+  }
+
+  .window-body h2 {
+    font-size: 11px;
+    font-weight: 700;
+    color: #0046d5;
+    margin: 12px 0 6px;
+  }
+
+  /* ---- Grilla de productos ---- */
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  .product-card {
+    background: #ece9d8;
+    border: 1px solid #919b9c;
+    padding: 3px;
+    cursor: pointer;
+  }
+
+  .product-card:hover {
+    border-color: #1250c8;
+  }
+
+  .product-card img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    background: #fff;
+    border: 1px solid #919b9c;
+    display: block;
+  }
+
+  .product-card .product-name {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 5px 2px 2px;
+    margin: 0;
+  }
+
+  .product-new {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 180px;
+    border: 1px dashed #919b9c;
+    background: #f7f6f1;
+    color: #0046d5;
+    font-size: 11px;
+    cursor: pointer;
+    text-align: center;
+    padding: 8px;
+  }
+
+  .product-new:hover {
+    background: #e8f0ff;
+  }
+
+  /* ---- Perfil ---- */
+  .profile-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .profile-header img {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    background: #fff;
+    border: 1px solid #919b9c;
+  }
+
+  .profile-header h1 {
+    font-size: 13px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .profile-header p {
+    font-size: 11px;
+    color: #555;
+    margin: 2px 0 0;
+  }
+
+  /* ---- Detalle de producto ---- */
+  .detail-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .detail-images img {
+    max-width: 260px;
+    max-height: 260px;
+    object-fit: cover;
+    background: #fff;
+    border: 1px solid #919b9c;
+    padding: 2px;
+  }
+}

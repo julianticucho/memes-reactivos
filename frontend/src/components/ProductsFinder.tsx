@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import type { Product } from "../types/products";
 import ProductCard from "./ProductCard";
 
@@ -19,6 +20,7 @@ interface ProductsFinderProps {
 const ProductsFinder = ({ products }: ProductsFinderProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todas");
+  const navigate = useNavigate();
 
   const filtered = products.filter((p) => {
     const matchesName = p.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -29,48 +31,34 @@ const ProductsFinder = ({ products }: ProductsFinderProps) => {
 
   return (
     <>
-      <div style={{ display: "flex", gap: 12, marginBottom: 24 }}>
-        <input
-          type="text"
-          placeholder="Buscar por nombre..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          style={{ flex: 1, padding: 8 }}
-        />
-        <select
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          style={{ padding: 8 }}
-        >
-          {CATEGORIES.map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
-          ))}
-        </select>
-      </div>
+      <fieldset>
+        <legend>Buscar</legend>
+        <div className="field-row">
+          <label htmlFor="search">Nombre:</label>
+          <input
+            id="search"
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ flex: 1 }}
+          />
+          <label htmlFor="category">Categoría:</label>
+          <select
+            id="category"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+          >
+            {CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+        </div>
+      </fieldset>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: 16,
-        }}
-      >
-        <div
-          onClick={() => (window.location.href = "/product/new")}
-          style={{
-            border: "2px dashed #ccc",
-            borderRadius: 4,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            minHeight: 260,
-            cursor: "pointer",
-            fontSize: 18,
-            color: "#888",
-          }}
-        >
+      <div className="product-grid">
+        <div className="product-new" onClick={() => navigate("/product/new")}>
           + Publicar un producto
         </div>
         {filtered.map((product) => (
