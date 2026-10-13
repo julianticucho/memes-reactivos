@@ -3,6 +3,12 @@ import { useParams } from "react-router-dom";
 import type { Product } from "../types/products";
 import productsService from "../services/products";
 
+const formatDate = (iso: string) =>
+  new Date(iso).toLocaleString("es-CL", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<Product | null>(null);
@@ -45,6 +51,16 @@ const ProductDetail = () => {
           <label>Categoría:</label>
           <span>{product.category}</span>
         </div>
+        <div className="field-row">
+          <label>Publicado:</label>
+          <span>{formatDate(product.createdAt)}</span>
+        </div>
+        {product.updatedAt !== product.createdAt && (
+          <div className="field-row">
+            <label>Actualizado:</label>
+            <span>{formatDate(product.updatedAt)}</span>
+          </div>
+        )}
       </fieldset>
     </>
   );

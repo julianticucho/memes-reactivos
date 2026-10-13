@@ -52,6 +52,7 @@ interface ProductsFinderProps {
 const ProductsFinder = ({ products }: ProductsFinderProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todas");
+  const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
   const [page, setPage] = useState(1);
   const navigate = useNavigate();
 
@@ -62,18 +63,24 @@ const ProductsFinder = ({ products }: ProductsFinderProps) => {
     return matchesName && matchesCategory;
   });
 
-  const totalPages = filtered.length <= FIRST_PAGE
+  const ordered = [...filtered].sort((a, b) =>
+    sortOrder === "newest"
+      ? b.createdAt.localeCompare(a.createdAt)
+      : a.createdAt.localeCompare(b.createdAt),
+  );
+
+  const totalPages = ordered.length <= FIRST_PAGE
     ? 1
-    : 1 + Math.ceil((filtered.length - FIRST_PAGE) / PER_PAGE);
+    : 1 + Math.ceil((ordered.length - FIRST_PAGE) / PER_PAGE);
   const current = Math.min(page, totalPages);
   const start = current === 1 ? 0 : FIRST_PAGE + (current - 2) * PER_PAGE;
   const end = current === 1 ? FIRST_PAGE : FIRST_PAGE + (current - 1) * PER_PAGE;
-  const visible = filtered.slice(start, end);
+  const visible = ordered.slice(start, end);
 
   return (
     <>
       <fieldset>
-        <legend>Buscar</legend>
+        <legend>Buscar y ordenar</legend>
         <div className="field-row">
           <label htmlFor="search">Nombre:</label>
           <input
@@ -100,6 +107,15 @@ const ProductsFinder = ({ products }: ProductsFinderProps) => {
                 {cat}
               </option>
             ))}
+          </select>
+          <label htmlFor="sort">Orden:</label>
+          <select
+            id="sort"
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value as "newest" | "oldest")}
+          >
+            <option value="newest">Más recientes</option>
+            <option value="oldest">Más antiguos</option>
           </select>
         </div>
       </fieldset>
