@@ -20,6 +20,16 @@ const create = async (data: ProductCreateData) => {
     .then((response) => response.data);
 };
 
+const update = async (id: string, data: ProductCreateData) => {
+  return axiosSecure
+    .put<Product>(`/api/products/${id}`, data)
+    .then((response) => response.data);
+};
+
+const remove = async (id: string) => {
+  await axiosSecure.delete(`/api/products/${id}`);
+};
+
 const getById = async (id: string) => {
   return axios
     .get<Product>(`/api/products/${id}`)
@@ -29,5 +39,7 @@ const getById = async (id: string) => {
 export default {
   getAll,
   create,
+  update,
+  remove,
   getById,
 };

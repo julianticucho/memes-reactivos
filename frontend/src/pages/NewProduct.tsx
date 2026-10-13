@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import productsService from "../services/products";
+import type { Product } from "../types/products";
 
 const CATEGORIES = [
   "Electrónica",
@@ -16,17 +17,18 @@ interface NewProductProps {
     message: string;
     severity: "success" | "error";
   }) => void;
+  product?: Product;
 }
 
-const NewProduct = ({ setToast }: NewProductProps) => {
+const NewProduct = ({ setToast, product }: NewProductProps) => {
   const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [price, setPrice] = useState("");
-  const [category, setCategory] = useState("");
+  const [name, setName] = useState(product?.name ?? "");
+  const [description, setDescription] = useState(product?.description ?? "");
+  const [price, setPrice] = useState(product ? String(product.price) : "");
+  const [category, setCategory] = useState(product?.category ?? "");
 
   // Images are base64 data URLs, we save that as a string.
-  const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState<string[]>(product?.image ?? []);
   const [selectedIdx, setSelectedIdx] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -62,21 +64,32 @@ const NewProduct = ({ setToast }: NewProductProps) => {
 
   const handleSubmit = (e: React.SubmitEvent) => {
     e.preventDefault();
-    productsService
-      .create({
-        name: name.trim(),
-        description: description.trim(),
-        price: Number(price),
-        category,
-        image: images.length > 0 ? images : null,
-      })
-      .then(() => {
-        setToast({ message: "Producto publicado", severity: "success" });
-        navigate("/");
+    const data = {
+      name: name.trim(),
+      description: description.trim(),
+      price: Number(price),
+      category,
+      image: images.length > 0 ? images : null,
+    };
+    const request = product
+      ? productsService.update(product._id, data)
+      : productsService.create(data);
+    request
+      .then((saved) => {
+        if (product) {
+          setToast({ message: "Producto actualizado", severity: "success" });
+          navigate(`/product/${saved._id}`);
+        } else {
+          setToast({ message: "Producto publicado", severity: "success" });
+          navigate("/");
+        }
       })
       .catch((err) => {
         const msg
-          = err?.response?.data?.error || "Error al publicar (¿sesión expirada?)";
+          = err?.response?.data?.error
+            || (product
+              ? "Error al actualizar (¿sesión expirada?)"
+              : "Error al publicar (¿sesión expirada?)");
         setToast({ message: msg, severity: "error" });
       });
   };
@@ -96,7 +109,7 @@ const NewProduct = ({ setToast }: NewProductProps) => {
 
   return (
     <>
-      <h1>Publicar producto</h1>
+      <h1>{product ? "Editar producto" : "Publicar producto"}</h1>
 
       <form
         onSubmit={handleSubmit}
@@ -242,7 +255,7 @@ const NewProduct = ({ setToast }: NewProductProps) => {
           </div>
         </div>
 
-        <button type="submit">Publicar</button>
+        <button type="submit">{product ? "Guardar cambios" : "Publicar"}</button>
       </form>
     </>
   );

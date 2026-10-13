@@ -10,6 +10,7 @@ import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NewProduct from "./pages/NewProduct";
+import EditProduct from "./pages/EditProduct";
 import ProductDetail from "./pages/ProductDetail";
 
 function App() {
@@ -110,7 +111,18 @@ function App() {
                         : <Navigate to="/login" replace />
                     }
                   />
-                  <Route path="/product/:id" element={<ProductDetail />} />
+                  <Route
+                    path="/product/:id"
+                    element={<ProductDetail user={user} setToast={setToast} />}
+                  />
+                  <Route
+                    path="/product/:id/edit"
+                    element={
+                      user
+                        ? <EditProduct user={user} setToast={setToast} />
+                        : <Navigate to="/login" replace />
+                    }
+                  />
                   <Route path="*" element={<h1>Página no encontrada</h1>} />
                 </Routes>
               )}

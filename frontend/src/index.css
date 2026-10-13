@@ -267,6 +267,47 @@ body {
     text-align: center;
     margin: 16px 0;
   }
+
+  /* ---- Modal de confirmación (eliminar producto) ---- */
+  .detail-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1100;
+  }
+
+  .confirm-window {
+    width: 320px;
+    margin: 0;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.45);
+  }
+
+  .confirm-window .window-body {
+    margin: 0 3px 3px;
+    padding: 10px;
+    font-size: 11px;
+    background: #fff;
+    border: 1px solid #919b9c;
+  }
+
+  .confirm-window .window-body p {
+    margin: 0 0 12px;
+  }
+
+  .confirm-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+  }
 }
 
 @keyframes toast-in {

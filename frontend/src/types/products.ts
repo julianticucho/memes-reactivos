@@ -6,6 +6,7 @@ export interface Product {
   image: string[] | null
   seller: string
   category: string
+  user?: string | null
   createdAt: string
   updatedAt: string
 }
