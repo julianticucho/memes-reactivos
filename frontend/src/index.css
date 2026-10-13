@@ -226,6 +226,47 @@ body {
     background: #fff;
     border: 1px solid #919b9c;
   }
+
+  /* ---- Paginación ---- */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+
+  .pagination button {
+    min-width: 28px;
+    padding: 3px 8px;
+    font-size: 11px;
+  }
+
+  .pagination button:disabled {
+    color: #999;
+    cursor: default;
+  }
+
+  .pagination .page-current {
+    background: #2a5cdb;
+    color: #fff;
+    font-weight: 700;
+  }
+
+  .pagination .ellipsis {
+    color: #555;
+    padding: 0 2px;
+    align-self: center;
+    font-size: 11px;
+  }
+
+  .empty-state {
+    font-size: 11px;
+    color: #555;
+    text-align: center;
+    margin: 16px 0;
+  }
 }
 
 @keyframes toast-in {
