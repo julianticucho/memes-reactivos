@@ -8,6 +8,7 @@ import User from "./models/user.js"
 import Product from "./models/product.js"
 
 const PRODUCTS_PER_USER = 8
+const IMAGES_PER_PRODUCT = 3
 
 // https://http.cat/<code> 
 const HTTP_CODES = [
@@ -45,6 +46,16 @@ const fetchCatImage = async (code: number): Promise<string | null> => {
     }
 }
 
+const pickRandomCodes = (count: number): number[] => {
+    const pool = [...HTTP_CODES]
+    const picked: number[] = []
+    while (picked.length < count && pool.length > 0) {
+        const index = Math.floor(Math.random() * pool.length)
+        picked.push(pool.splice(index, 1)[0])
+    }
+    return picked
+}
+
 const main = async () => {
     const arg = process.argv[2]
     let userCount = 2
@@ -76,12 +87,14 @@ const main = async () => {
         const products = await Promise.all(
             Array.from({ length: PRODUCTS_PER_USER }, async () => {
                 const name = `producto_${productNumber++}`
-                const image = await fetchCatImage(randomFrom(HTTP_CODES))
+                const images = (await Promise.all(
+                    pickRandomCodes(IMAGES_PER_PRODUCT).map(fetchCatImage),
+                )).filter((image): image is string => image !== null)
                 return {
                     name,
                     description: DESCRIPTION,
                     price: 1000 + Math.floor(Math.random() * 99000),
-                    image: image ? [image] : null,
+                    image: images.length > 0 ? images : null,
                     seller: user.username,
                     category: randomFrom(CATEGORIES),
                     user: user._id,
