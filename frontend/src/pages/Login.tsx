@@ -7,9 +7,13 @@ import type { User } from "../types/users";
 
 interface LoginProps {
   setUser: (user: User | null) => void;
+  setToast: (toast: {
+    message: string;
+    severity: "success" | "error";
+  }) => void;
 }
 
-const Login = ({ setUser }: LoginProps) => {
+const Login = ({ setUser, setToast }: LoginProps) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -22,6 +26,10 @@ const Login = ({ setUser }: LoginProps) => {
       await authService.login({ username, password });
       const loggedUser = await authService.restoreLogin();
       setUser(loggedUser);
+      setToast({
+        message: `Bienvenido, ${loggedUser?.username ?? username}`,
+        severity: "success",
+      });
       navigate("/");
     } catch (err) {
       if (axios.isAxiosError(err) && err.response?.data?.error) {

@@ -4,7 +4,14 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import authService from "../services/auth";
 
-const Register = () => {
+interface RegisterProps {
+  setToast: (toast: {
+    message: string;
+    severity: "success" | "error";
+  }) => void;
+}
+
+const Register = ({ setToast }: RegisterProps) => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,6 +32,10 @@ const Register = () => {
     }
     try {
       await authService.register({ username, email, password });
+      setToast({
+        message: "Cuenta creada. Inicia sesión.",
+        severity: "success",
+      });
       navigate("/login");
     } catch (err) {
       if (axios.isAxiosError(err) && err.response?.data?.error) {

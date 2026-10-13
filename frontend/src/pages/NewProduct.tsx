@@ -11,7 +11,14 @@ const CATEGORIES = [
   "Otros",
 ];
 
-const NewProduct = () => {
+interface NewProductProps {
+  setToast: (toast: {
+    message: string;
+    severity: "success" | "error";
+  }) => void;
+}
+
+const NewProduct = ({ setToast }: NewProductProps) => {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -63,11 +70,14 @@ const NewProduct = () => {
         category,
         image: images.length > 0 ? images : null,
       })
-      .then(() => navigate("/"))
+      .then(() => {
+        setToast({ message: "Producto publicado", severity: "success" });
+        navigate("/");
+      })
       .catch((err) => {
         const msg
           = err?.response?.data?.error || "Error al publicar (¿sesión expirada?)";
-        alert(msg);
+        setToast({ message: msg, severity: "error" });
       });
   };
 

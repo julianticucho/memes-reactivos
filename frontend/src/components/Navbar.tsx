@@ -5,14 +5,19 @@ import authService from "../services/auth";
 interface NavbarProps {
   user: User | null;
   setUser: (user: User | null) => void;
+  setToast: (toast: {
+    message: string;
+    severity: "success" | "error";
+  }) => void;
 }
 
-const Navbar = ({ user, setUser }: NavbarProps) => {
+const Navbar = ({ user, setUser, setToast }: NavbarProps) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
     authService.logout().then(() => {
       setUser(null);
+      setToast({ message: "Sesión cerrada", severity: "success" });
       navigate("/");
     });
   };

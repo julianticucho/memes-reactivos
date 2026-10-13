@@ -206,4 +206,35 @@ body {
     border: 1px solid #919b9c;
     padding: 2px;
   }
+
+  /* toast */
+  .toast-window {
+    position: fixed;
+    top: 60px;
+    right: 16px;
+    width: 280px;
+    z-index: 1000;
+    margin: 0;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.45);
+    animation: toast-in 0.2s ease-out;
+  }
+
+  .toast-window .window-body {
+    margin: 0 3px 3px;
+    padding: 10px;
+    font-size: 11px;
+    background: #fff;
+    border: 1px solid #919b9c;
+  }
+}
+
+@keyframes toast-in {
+  from {
+    transform: translateX(110%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }

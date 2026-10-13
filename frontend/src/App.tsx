@@ -37,20 +37,26 @@ function App() {
   return (
     <BrowserRouter>
       {toast && (
-        <div
-          style={{
-            position: "fixed",
-            top: 16,
-            right: 16,
-            padding: "12px 20px",
-            borderRadius: 4,
-            color: "#fff",
-            backgroundColor:
-              toast.severity === "success" ? "#4caf50" : "#f44336",
-            zIndex: 1000,
-          }}
-        >
-          {toast.message}
+        <div className="toast-window window" role="status" aria-live="polite">
+          <div className="title-bar">
+            <div className="title-bar-text">
+              {toast.severity === "success"
+                ? (
+                    "Éxito"
+                  )
+                : (
+                    "Error"
+                  )}
+            </div>
+            <div className="title-bar-controls">
+              <button
+                type="button"
+                aria-label="Close"
+                onClick={() => setToast(null)}
+              />
+            </div>
+          </div>
+          <div className="window-body">{toast.message}</div>
         </div>
       )}
 
@@ -64,7 +70,7 @@ function App() {
           </div>
         </div>
 
-        <Navbar user={user} setUser={setUser} />
+        <Navbar user={user} setUser={setUser} setToast={setToast} />
 
         <div className="window-body">
           {restoring
@@ -83,17 +89,25 @@ function App() {
                   <Route
                     path="/login"
                     element={
-                      user ? <Navigate to="/" replace /> : <Login setUser={setUser} />
+                      user
+                        ? <Navigate to="/" replace />
+                        : <Login setUser={setUser} setToast={setToast} />
                     }
                   />
                   <Route
                     path="/register"
-                    element={user ? <Navigate to="/" replace /> : <Register />}
+                    element={
+                      user
+                        ? <Navigate to="/" replace />
+                        : <Register setToast={setToast} />
+                    }
                   />
                   <Route
                     path="/product/new"
                     element={
-                      user ? <NewProduct /> : <Navigate to="/login" replace />
+                      user
+                        ? <NewProduct setToast={setToast} />
+                        : <Navigate to="/login" replace />
                     }
                   />
                   <Route path="/product/:id" element={<ProductDetail />} />
