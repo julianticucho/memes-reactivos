@@ -7,10 +7,7 @@ import type { User } from "../types/users";
 
 interface LoginProps {
   setUser: (user: User | null) => void;
-  setToast: (toast: {
-    message: string;
-    severity: "success" | "error";
-  }) => void;
+  setToast: (toast: { message: string; severity: "success" | "error" }) => void;
 }
 
 const Login = ({ setUser, setToast }: LoginProps) => {
@@ -41,44 +38,52 @@ const Login = ({ setUser, setToast }: LoginProps) => {
   };
 
   return (
-    <>
-      <h1>Iniciar sesión</h1>
-      {error && (
-        <p style={{ color: "#f44336", backgroundColor: "#ffebee", padding: "8px 12px", borderRadius: 4 }}>
-          {error}
-        </p>
-      )}
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          maxWidth: 400,
-          display: "flex",
-          flexDirection: "column",
-          gap: 8,
-        }}
-      >
-        <input
-          placeholder="Nombre de usuario"
-          required
-          autoComplete="username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <input
-          placeholder="Contraseña"
-          required
-          type="password"
-          autoComplete="current-password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit">Iniciar sesión</button>
-      </form>
-      <p>
-        ¿No tienes cuenta?{" "}
-        <Link to="/register">Registrarse</Link>
-      </p>
-    </>
+    <div className="window auth-window">
+      <div className="title-bar">
+        <div className="title-bar-text">Iniciar sesión</div>
+        <div className="title-bar-controls">
+          <button type="button" aria-label="Minimize" />
+          <button type="button" aria-label="Maximize" />
+          <button type="button" aria-label="Close" />
+        </div>
+      </div>
+      <div className="window-body">
+        {error && (
+          <p
+            style={{
+              color: "#f44336",
+              backgroundColor: "#ffebee",
+              padding: "8px 12px",
+              borderRadius: 4,
+            }}
+          >
+            {error}
+          </p>
+        )}
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <input
+            placeholder="Nombre de usuario"
+            required
+            autoComplete="username"
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <input
+            placeholder="Contraseña"
+            required
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <div className="auth-actions">
+            <Link to="/register">¿No tienes cuenta? Registrarse</Link>
+            <button type="submit">Iniciar sesión</button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 };
 

@@ -5,10 +5,7 @@ import axios from "axios";
 import authService from "../services/auth";
 
 interface RegisterProps {
-  setToast: (toast: {
-    message: string;
-    severity: "success" | "error";
-  }) => void;
+  setToast: (toast: { message: string; severity: "success" | "error" }) => void;
 }
 
 const Register = ({ setToast }: RegisterProps) => {
@@ -47,60 +44,68 @@ const Register = ({ setToast }: RegisterProps) => {
   };
 
   return (
-    <>
-      <h1>Crear cuenta</h1>
-      {error && (
-        <p style={{ color: "#f44336", backgroundColor: "#ffebee", padding: "8px 12px", borderRadius: 4 }}>
-          {error}
-        </p>
-      )}
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          maxWidth: 400,
-          display: "flex",
-          flexDirection: "column",
-          gap: 8,
-        }}
-      >
-        <input
-          placeholder="Nombre de usuario"
-          required
-          autoComplete="username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <input
-          placeholder="Email"
-          required
-          type="email"
-          autoComplete="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          placeholder="Contraseña"
-          required
-          type="password"
-          autoComplete="new-password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <input
-          placeholder="Confirmar contraseña"
-          required
-          type="password"
-          autoComplete="new-password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
-        <button type="submit">Registrarse</button>
-      </form>
-      <p>
-        ¿Ya tienes cuenta?{" "}
-        <Link to="/login">Iniciar sesión</Link>
-      </p>
-    </>
+    <div className="window auth-window">
+      <div className="title-bar">
+        <div className="title-bar-text">Crear cuenta</div>
+        <div className="title-bar-controls">
+          <button type="button" aria-label="Minimize" />
+          <button type="button" aria-label="Maximize" />
+          <button type="button" aria-label="Close" />
+        </div>
+      </div>
+      <div className="window-body">
+        {error && (
+          <p
+            style={{
+              color: "#f44336",
+              backgroundColor: "#ffebee",
+              padding: "8px 12px",
+              borderRadius: 4,
+            }}
+          >
+            {error}
+          </p>
+        )}
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <input
+            placeholder="Nombre de usuario"
+            type="text"
+            required
+            autoComplete="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <input
+            placeholder="Email"
+            required
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <input
+            placeholder="Contraseña"
+            required
+            type="password"
+            autoComplete="new-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <input
+            placeholder="Confirmar contraseña"
+            required
+            type="password"
+            autoComplete="new-password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+          <div className="auth-actions">
+            <Link to="/login">¿Ya tienes cuenta? Iniciar sesión</Link>
+            <button type="submit">Registrarse</button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 };
 

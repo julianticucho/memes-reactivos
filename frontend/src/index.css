@@ -268,6 +268,38 @@ body {
     margin: 16px 0;
   }
 
+  /* ---- Ventanas de autenticacion ---- */
+  .auth-window {
+    width: 360px;
+    margin: 40px auto;
+  }
+
+  .auth-window .window-body {
+    margin: 0 3px 3px;
+    padding: 10px;
+    font-size: 11px;
+    background: #fff;
+    border: 1px solid #919b9c;
+  }
+
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .auth-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .auth-actions button {
+    width: fit-content;
+  }
+
   /* ---- Modal de confirmación (eliminar producto) ---- */
   .detail-actions {
     display: flex;
