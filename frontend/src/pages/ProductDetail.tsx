@@ -45,8 +45,8 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
         navigate("/");
       })
       .catch((err) => {
-        const msg =
-          err?.response?.data?.error || "Error al eliminar (¿sesión expirada?)";
+        const msg
+          = err?.response?.data?.error || "Error al eliminar (¿sesión expirada?)";
         setToast({ message: msg, severity: "error" });
       });
   };
@@ -75,14 +75,16 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
         <div className="window-body">
           <div className="monitor">
             <div className="monitor-screen">
-              {total > 0 ? (
-                <img
-                  src={images[imgIdx]}
-                  alt={`${product.name} ${imgIdx + 1} de ${total}`}
-                />
-              ) : (
-                <span className="no-image">Sin imagen</span>
-              )}
+              {total > 0
+                ? (
+                    <img
+                      src={images[imgIdx]}
+                      alt={`${product.name} ${imgIdx + 1} de ${total}`}
+                    />
+                  )
+                : (
+                    <span className="no-image">Sin imagen</span>
+                  )}
             </div>
             <div className="monitor-stand" />
           </div>

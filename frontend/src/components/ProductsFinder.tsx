@@ -2,8 +2,7 @@ import { useState } from "react";
 import type { Product } from "../types/products";
 import ProductCard from "./ProductCard";
 
-const PER_PAGE = 16;
-const FIRST_PAGE = 15;
+const PER_PAGE = 18;
 
 const CATEGORIES = [
   "Todas",
@@ -67,12 +66,10 @@ const ProductsFinder = ({ products }: ProductsFinderProps) => {
       : a.createdAt.localeCompare(b.createdAt),
   );
 
-  const totalPages = ordered.length <= FIRST_PAGE
-    ? 1
-    : 1 + Math.ceil((ordered.length - FIRST_PAGE) / PER_PAGE);
+  const totalPages = Math.max(1, Math.ceil(ordered.length / PER_PAGE));
   const current = Math.min(page, totalPages);
-  const start = current === 1 ? 0 : FIRST_PAGE + (current - 2) * PER_PAGE;
-  const end = current === 1 ? FIRST_PAGE : FIRST_PAGE + (current - 1) * PER_PAGE;
+  const start = (current - 1) * PER_PAGE;
+  const end = start + PER_PAGE;
   const visible = ordered.slice(start, end);
 
   return (
