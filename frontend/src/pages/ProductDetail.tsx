@@ -24,12 +24,16 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [confirming, setConfirming] = useState(false);
+  const [imgIdx, setImgIdx] = useState(0);
 
   useEffect(() => {
     if (!id) return;
     productsService
       .getById(id)
-      .then(setProduct)
+      .then((data) => {
+        setProduct(data);
+        setImgIdx(0);
+      })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, [id]);
@@ -54,54 +58,121 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
   if (!product) return <p>Producto no encontrado</p>;
 
   const isOwner = !!user && product.user === user.id;
+  const images = product.image ?? [];
+  const total = images.length;
 
   return (
     <>
-      <h1>{product.name}</h1>
-      {product.image && product.image.length > 0 && (
-        <div className="detail-images">
-          {product.image.map((img, idx) => (
-            <img key={idx} src={img} alt={`${product.name} ${idx + 1}`} />
-          ))}
-        </div>
-      )}
-      <fieldset>
-        <legend>Detalles</legend>
-        <p>{product.description}</p>
-        <div className="field-row">
-          <label>Precio:</label>
-          <span>${product.price}</span>
-        </div>
-        <div className="field-row">
-          <label>Vendedor:</label>
-          <span>{product.seller}</span>
-        </div>
-        <div className="field-row">
-          <label>Categoría:</label>
-          <span>{product.category}</span>
-        </div>
-        <div className="field-row">
-          <label>Publicado:</label>
-          <span>{formatDate(product.createdAt)}</span>
-        </div>
-        {product.updatedAt !== product.createdAt && (
-          <div className="field-row">
-            <label>Actualizado:</label>
-            <span>{formatDate(product.updatedAt)}</span>
+      <div className="window detail-window">
+        <div className="title-bar">
+          <div className="title-bar-text">{product.name}</div>
+          <div className="title-bar-controls">
+            <button
+              type="button"
+              aria-label="Close"
+              onClick={() => navigate("/")}
+            />
           </div>
-        )}
-      </fieldset>
-
-      {isOwner && (
-        <div className="detail-actions">
-          <button type="button" onClick={() => navigate(`/product/${product._id}/edit`)}>
-            Editar
-          </button>
-          <button type="button" onClick={() => setConfirming(true)}>
-            Eliminar
-          </button>
         </div>
-      )}
+
+        <div className="window-body">
+          <div className="monitor">
+            <div className="monitor-screen">
+              {total > 0
+                ? (
+                    <img
+                      src={images[imgIdx]}
+                      alt={`${product.name} ${imgIdx + 1} de ${total}`}
+                    />
+                  )
+                : (
+                    <span className="no-image">Sin imagen</span>
+                  )}
+            </div>
+            <div className="monitor-stand" />
+          </div>
+
+          {total > 1 && (
+            <div className="image-pager">
+              <button
+                type="button"
+                aria-label="Imagen anterior"
+                disabled={imgIdx === 0}
+                onClick={() => setImgIdx((i) => i - 1)}
+              >
+                ◀
+              </button>
+              <span>
+                {imgIdx + 1}
+                {" / "}
+                {total}
+              </span>
+              <button
+                type="button"
+                aria-label="Imagen siguiente"
+                disabled={imgIdx === total - 1}
+                onClick={() => setImgIdx((i) => i + 1)}
+              >
+                ▶
+              </button>
+            </div>
+          )}
+
+          <p>Información:</p>
+          <ul className="tree-view info-box">
+            <li>
+              <span className="info-label">Precio: </span>
+              $
+              {product.price}
+            </li>
+            <li>
+              <span className="info-label">Vendedor: </span>
+              {product.seller}
+            </li>
+            <li>
+              <span className="info-label">Categoría: </span>
+              {product.category}
+            </li>
+            <li>
+              <span className="info-label">Publicado: </span>
+              {formatDate(product.createdAt)}
+            </li>
+            {product.updatedAt !== product.createdAt && (
+              <li>
+                <span className="info-label">Actualizado: </span>
+                {formatDate(product.updatedAt)}
+              </li>
+            )}
+            <li>
+              <span className="info-label">Descripción:</span>
+              <div className="info-desc">{product.description}</div>
+            </li>
+          </ul>
+
+          <div className="dialog-buttons">
+            <button
+              type="button"
+              disabled
+              title="Los comentarios aún no están implementados en el backend"
+            >
+              Comentar
+            </button>
+            {isOwner && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => navigate(`/product/${product._id}/edit`)}
+                >
+                  Editar
+                </button>
+                <button type="button" onClick={() => setConfirming(true)}>
+                  Eliminar
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
 
       {confirming && (
         <div className="confirm-overlay" role="dialog" aria-modal="true">
@@ -118,7 +189,9 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
             </div>
             <div className="window-body">
               <p>
-                ¿Eliminar «{product.name}»? Esta acción no se puede deshacer.
+                ¿Eliminar «
+                {product.name}
+                »? Esta acción no se puede deshacer.
               </p>
               <div className="confirm-actions">
                 <button type="button" onClick={handleDelete}>

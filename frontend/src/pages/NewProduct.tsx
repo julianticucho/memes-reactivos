@@ -123,6 +123,7 @@ const NewProduct = ({ setToast, product }: NewProductProps) => {
         <input
           placeholder="Nombre"
           required
+          type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />

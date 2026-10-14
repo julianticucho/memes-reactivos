@@ -18,6 +18,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         alt={product.name}
       />
       <p className="product-name">{product.name}</p>
+      <p className="product-price">${product.price}</p>
     </div>
   );
 };
