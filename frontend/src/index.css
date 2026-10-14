@@ -170,8 +170,8 @@ body {
   /* Vista "iconos" del explorador: icono con borde puntilloado
      de tamano fijo y, debajo, la etiqueta del archivo. */
   .product-card .product-card-icon {
-    width: 100%;
     aspect-ratio: 1;
+    width: 100%;
     box-sizing: border-box;
     border: 1px dotted #555;
     background: #fff;
@@ -180,6 +180,7 @@ body {
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    min-height: 0;
   }
 
   /* Hover: el marco puntilloso y el nombre se iluminan en azul, como un
