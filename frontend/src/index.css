@@ -3,7 +3,6 @@
    clases de Tailwind siguen pudiendo sobrescribir a XP.css). */
 @layer theme, base, xp, components, utilities;
 
-@import "tailwindcss";
 @import "xp.css/dist/XP.css" layer(xp);
 
 /* XP.css distribuye los tamanios de titulo de su propia pagina de demo
