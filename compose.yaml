@@ -1,0 +1,10 @@
+services:
+  mongodb:
+    image: docker.io/mongo:8
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb:/data/db
+
+volumes:
+  mongodb:

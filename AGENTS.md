@@ -19,7 +19,8 @@ frontend/  React 19 + Vite 7 + xp.css (Windows XP theme)
 Run each package from its own directory:
 
 ```bash
-# Backend — no eslint config here (`npm run lint` exits 2); the build IS the typecheck
+# Backend — `npm run lint` is a stub (eslint not installed, exits 127);
+# the build IS the typecheck
 cd backend && npm run dev     # tsx watch on :3001
 cd backend && npm run build   # tsc → build/
 
@@ -32,8 +33,11 @@ cd frontend && npx tsc -b     # typecheck only (project references)
 
 Verify changes with: backend `npm run build` · frontend `npx tsc -b && npm run lint`.
 
+No formatter script. `.vscode/` and `.zed/` format-on-save use Prettier defaults
+(no config, not a repo dependency) — match surrounding style, don't mass-reformat.
+
 ```bash
-cd backend && npm run seed        # seed demo data — DESTRUCTIVE: drops ALL users+products
+cd backend && npm run seed        # DESTRUCTIVE: drops ALL users+products; default 2 users
 cd backend && npm run seed -- 5   # N users usuario_1..N (password "123"), 8 products each
 ```
 
@@ -41,10 +45,12 @@ No combined "start all" script. Start both terminals manually.
 
 ## Prerequisites
 
-- MongoDB on port 27017. `backend/.env` (gitignored) sets `MONGODB_URI`/`PORT`/`JWT_SECRET`.
-- **DB name trap**: `.env.example` and the code fallback use `marketplace-beauchef`,
-  but the current local `.env` uses `marketplace-beauchef-demo-1` (where the seed
-  data lives). Check `.env` before assuming which DB you touch.
+- MongoDB on port 27017 — start it with `docker compose up -d` (`compose.yaml`,
+  mongo:8 + named volume; works through podman's docker shim).
+- `backend/.env` is gitignored and may not exist; every var has a code fallback
+  (`MONGODB_URI` → `mongodb://127.0.0.1:27017/marketplace-beauchef`, `PORT` → 3001,
+  `JWT_SECRET` → `my_secret`). If a `.env` exists, read it — it can point at a
+  different DB name than `.env.example`; don't assume which DB holds the seed data.
 - `src/models/product.ts` runs `mongoose.connect()` at import time.
 
 ## Backend Gotchas
@@ -70,11 +76,8 @@ No combined "start all" script. Start both terminals manually.
 - **ESLint** — self-closing tags enforced; `no-console` = warn;
   `react-hooks/exhaustive-deps` = off.
 - **CSS layers** — `@layer theme, base, xp, components, utilities`; XP.css sits in
-  `xp`. Custom styles go in `@layer components` (in `src/index.css`) or they lose
-  to / break XP.css overrides.
-- **Auth calls** — `utils/axiosSecure.ts` for authenticated requests (attaches
-  CSRF header + credentials); plain `axios` for public GETs. `user` and `setToast`
-  live in `App.tsx` and flow down as props.
+  `xp`. Custom styles go in `@layer components` (in `src/index.css`) or they lose to / break XP.css overrides.
+- **Auth calls** — `utils/axiosSecure.ts` for authenticated requests (attaches CSRF header + credentials); plain `axios` for public GETs. `user` and `setToast` live in `App.tsx` and flow down as props.
 - **UX convention** — successes → XP toast via `setToast`; form field errors →
   inline `<p>`.
 - **No file uploads** — `Product.image` is `string[] | null` of base64 data URLs.
