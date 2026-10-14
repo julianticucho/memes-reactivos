@@ -17,12 +17,7 @@ const Home = () => {
 
   if (loading) return <p>Cargando...</p>;
 
-  return (
-    <>
-      <h1>Productos disponibles</h1>
-      <ProductsFinder products={products} />
-    </>
-  );
+  return <ProductsFinder products={products} />;
 };
 
 export default Home;

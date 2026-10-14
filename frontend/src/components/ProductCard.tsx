@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import type { Product } from "../types/products";
 
 interface ProductCardProps {
-  product: Product
+  product: Product;
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
@@ -13,12 +13,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
       className="product-card"
       onClick={() => navigate(`/product/${product._id}`)}
     >
-      <img
-        src={product.image?.[0] || "/no-image.avif"}
-        alt={product.name}
-      />
-      <p className="product-name">{product.name}</p>
-      <p className="product-price">${product.price}</p>
+      <div className="product-card-icon">
+        <img src={product.image?.[0] || "/no-image.avif"} alt={product.name} />
+      </div>
+      <div className="product-card-label">
+        <p className="product-name">{product.name}</p>
+        <p className="product-seller">{product.seller}</p>
+        <p className="product-price">${product.price}</p>
+      </div>
     </div>
   );
 };

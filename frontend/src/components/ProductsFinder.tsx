@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import type { Product } from "../types/products";
 import ProductCard from "./ProductCard";
 
@@ -54,7 +53,6 @@ const ProductsFinder = ({ products }: ProductsFinderProps) => {
   const [selectedCategory, setSelectedCategory] = useState("Todas");
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
   const [page, setPage] = useState(1);
-  const navigate = useNavigate();
 
   const filtered = products.filter((p) => {
     const matchesName = p.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -79,56 +77,44 @@ const ProductsFinder = ({ products }: ProductsFinderProps) => {
 
   return (
     <>
-      <fieldset>
-        <legend>Buscar y ordenar</legend>
-        <div className="field-row">
-          <label htmlFor="search">Nombre:</label>
-          <input
-            id="search"
-            type="text"
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setPage(1);
-            }}
-            style={{ flex: 1 }}
-          />
-          <label htmlFor="category">Categoría:</label>
-          <select
-            id="category"
-            value={selectedCategory}
-            onChange={(e) => {
-              setSelectedCategory(e.target.value);
-              setPage(1);
-            }}
-          >
-            {CATEGORIES.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
-          <label htmlFor="sort">Orden:</label>
-          <select
-            id="sort"
-            value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value as "newest" | "oldest")}
-          >
-            <option value="newest">Más recientes</option>
-            <option value="oldest">Más antiguos</option>
-          </select>
-        </div>
-      </fieldset>
+      <div className="finder-bar">
+        <label htmlFor="search">Búsqueda:</label>
+        <input
+          id="search"
+          type="text"
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setPage(1);
+          }}
+        />
+        <label htmlFor="sort">Orden:</label>
+        <select
+          id="sort"
+          value={sortOrder}
+          onChange={(e) => setSortOrder(e.target.value as "newest" | "oldest")}
+        >
+          <option value="newest">Más recientes</option>
+          <option value="oldest">Más antiguos</option>
+        </select>
+        <label htmlFor="category">Filtro:</label>
+        <select
+          id="category"
+          value={selectedCategory}
+          onChange={(e) => {
+            setSelectedCategory(e.target.value);
+            setPage(1);
+          }}
+        >
+          {CATEGORIES.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
+        </select>
+      </div>
 
       <div className="product-grid">
-        {current === 1 && (
-          <div
-            className="product-new"
-            onClick={() => navigate("/product/new")}
-          >
-            + Publicar un producto
-          </div>
-        )}
         {visible.map((product) => (
           <ProductCard key={product._id} product={product} />
         ))}
