@@ -12,10 +12,7 @@ const formatDate = (iso: string) =>
 
 interface ProductDetailProps {
   user: User | null;
-  setToast: (toast: {
-    message: string;
-    severity: "success" | "error";
-  }) => void;
+  setToast: (toast: { message: string; severity: "success" | "error" }) => void;
 }
 
 const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
@@ -48,8 +45,8 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
         navigate("/");
       })
       .catch((err) => {
-        const msg
-          = err?.response?.data?.error || "Error al eliminar (¿sesión expirada?)";
+        const msg =
+          err?.response?.data?.error || "Error al eliminar (¿sesión expirada?)";
         setToast({ message: msg, severity: "error" });
       });
   };
@@ -78,16 +75,14 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
         <div className="window-body">
           <div className="monitor">
             <div className="monitor-screen">
-              {total > 0
-                ? (
-                    <img
-                      src={images[imgIdx]}
-                      alt={`${product.name} ${imgIdx + 1} de ${total}`}
-                    />
-                  )
-                : (
-                    <span className="no-image">Sin imagen</span>
-                  )}
+              {total > 0 ? (
+                <img
+                  src={images[imgIdx]}
+                  alt={`${product.name} ${imgIdx + 1} de ${total}`}
+                />
+              ) : (
+                <span className="no-image">Sin imagen</span>
+              )}
             </div>
             <div className="monitor-stand" />
           </div>
@@ -100,7 +95,7 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
                 disabled={imgIdx === 0}
                 onClick={() => setImgIdx((i) => i - 1)}
               >
-                ◀
+                &lt;
               </button>
               <span>
                 {imgIdx + 1}
@@ -113,7 +108,7 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
                 disabled={imgIdx === total - 1}
                 onClick={() => setImgIdx((i) => i + 1)}
               >
-                ▶
+                &gt;
               </button>
             </div>
           )}
@@ -121,9 +116,7 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
           <p>Información:</p>
           <ul className="tree-view info-box">
             <li>
-              <span className="info-label">Precio: </span>
-              $
-              {product.price}
+              <span className="info-label">Precio: </span>${product.price}
             </li>
             <li>
               <span className="info-label">Vendedor: </span>
@@ -189,8 +182,7 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
             </div>
             <div className="window-body">
               <p>
-                ¿Eliminar «
-                {product.name}
+                ¿Eliminar «{product.name}
                 »? Esta acción no se puede deshacer.
               </p>
               <div className="confirm-actions">
