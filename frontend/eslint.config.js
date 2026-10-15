@@ -15,19 +15,15 @@ export default tseslint.config([
       tseslint.configs.recommended,
       reactHooks.configs["recommended-latest"],
       reactRefresh.configs.vite,
-      stylistic.configs.recommended,
     ],
+    plugins: {
+      "@stylistic": stylistic,
+    },
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
     },
     rules: {
-      "@stylistic/quotes": "off",
-      "@stylistic/semi": "off",
-      "@stylistic/arrow-parens": "off",
-      "@stylistic/brace-style": "off",
-      "@stylistic/jsx-one-expression-per-line": "off",
-      "@stylistic/member-delimiter-style": "off",
       "@stylistic/jsx-self-closing-comp": [
         "error",
         {
