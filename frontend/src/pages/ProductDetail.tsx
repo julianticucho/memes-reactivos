@@ -51,8 +51,25 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
       });
   };
 
-  if (loading) return <p>Cargando...</p>;
-  if (!product) return <p>Producto no encontrado</p>;
+  const handleClose = () => navigate("/");
+
+  if (loading || !product) {
+    return (
+      <div className="detail-overlay">
+        <div className="window detail-window" role="dialog" aria-modal="true">
+          <div className="title-bar">
+            <div className="title-bar-text">Detalle de producto</div>
+            <div className="title-bar-controls">
+              <button type="button" aria-label="Close" onClick={handleClose} />
+            </div>
+          </div>
+          <div className="window-body">
+            <p>{loading ? "Cargando..." : "Producto no encontrado"}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const isOwner = !!user && product.user === user.id;
   const images = product.image ?? [];
@@ -60,111 +77,114 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
 
   return (
     <>
-      <div className="window detail-window">
-        <div className="title-bar">
-          <div className="title-bar-text">{product.name}</div>
-          <div className="title-bar-controls">
-            <button
-              type="button"
-              aria-label="Close"
-              onClick={() => navigate("/")}
-            />
-          </div>
-        </div>
-
-        <div className="window-body">
-          <div className="monitor">
-            <div className="monitor-screen">
-              {total > 0
-                ? (
-                    <img
-                      src={images[imgIdx]}
-                      alt={`${product.name} ${imgIdx + 1} de ${total}`}
-                    />
-                  )
-                : (
-                    <span className="no-image">Sin imagen</span>
-                  )}
+      <div className="detail-overlay">
+        <div
+          className="window detail-window"
+          role="dialog"
+          aria-modal="true"
+          aria-label={product.name}
+        >
+          <div className="title-bar">
+            <div className="title-bar-text">{product.name}</div>
+            <div className="title-bar-controls">
+              <button type="button" aria-label="Close" onClick={handleClose} />
             </div>
-            <div className="monitor-stand" />
           </div>
 
-          {total > 1 && (
-            <div className="image-pager">
-              <button
-                type="button"
-                aria-label="Imagen anterior"
-                disabled={imgIdx === 0}
-                onClick={() => setImgIdx((i) => i - 1)}
-              >
-                &lt;
-              </button>
-              <span>
-                {imgIdx + 1}
-                {" / "}
-                {total}
-              </span>
-              <button
-                type="button"
-                aria-label="Imagen siguiente"
-                disabled={imgIdx === total - 1}
-                onClick={() => setImgIdx((i) => i + 1)}
-              >
-                &gt;
-              </button>
+          <div className="window-body">
+            <div className="monitor">
+              <div className="monitor-screen">
+                {total > 0
+                  ? (
+                      <img
+                        src={images[imgIdx]}
+                        alt={`${product.name} ${imgIdx + 1} de ${total}`}
+                      />
+                    )
+                  : (
+                      <span className="no-image">Sin imagen</span>
+                    )}
+              </div>
+              <div className="monitor-stand" />
             </div>
-          )}
 
-          <p>Información:</p>
-          <ul className="tree-view info-box">
-            <li>
-              <span className="info-label">Precio: </span>${product.price}
-            </li>
-            <li>
-              <span className="info-label">Vendedor: </span>
-              {product.seller}
-            </li>
-            <li>
-              <span className="info-label">Categoría: </span>
-              {product.category}
-            </li>
-            <li>
-              <span className="info-label">Publicado: </span>
-              {formatDate(product.createdAt)}
-            </li>
-            {product.updatedAt !== product.createdAt && (
-              <li>
-                <span className="info-label">Actualizado: </span>
-                {formatDate(product.updatedAt)}
-              </li>
-            )}
-            <li>
-              <span className="info-label">Descripción:</span>
-              <div className="info-desc">{product.description}</div>
-            </li>
-          </ul>
-
-          <div className="dialog-buttons">
-            <button
-              type="button"
-              disabled
-              title="Los comentarios aún no están implementados en el backend"
-            >
-              Comentar
-            </button>
-            {isOwner && (
-              <>
+            {total > 1 && (
+              <div className="image-pager">
                 <button
                   type="button"
-                  onClick={() => navigate(`/product/${product._id}/edit`)}
+                  aria-label="Imagen anterior"
+                  disabled={imgIdx === 0}
+                  onClick={() => setImgIdx((i) => i - 1)}
                 >
-                  Editar
+                  &lt;
                 </button>
-                <button type="button" onClick={() => setConfirming(true)}>
-                  Eliminar
+                <span>
+                  {imgIdx + 1}
+                  {" / "}
+                  {total}
+                </span>
+                <button
+                  type="button"
+                  aria-label="Imagen siguiente"
+                  disabled={imgIdx === total - 1}
+                  onClick={() => setImgIdx((i) => i + 1)}
+                >
+                  &gt;
                 </button>
-              </>
+              </div>
             )}
+
+            <p>Información:</p>
+            <ul className="tree-view info-box">
+              <li>
+                <span className="info-label">Precio: </span>${product.price}
+              </li>
+              <li>
+                <span className="info-label">Vendedor: </span>
+                {product.seller}
+              </li>
+              <li>
+                <span className="info-label">Categoría: </span>
+                {product.category}
+              </li>
+              <li>
+                <span className="info-label">Publicado: </span>
+                {formatDate(product.createdAt)}
+              </li>
+              {product.updatedAt !== product.createdAt && (
+                <li>
+                  <span className="info-label">Actualizado: </span>
+                  {formatDate(product.updatedAt)}
+                </li>
+              )}
+              <li>
+                <span className="info-label">Descripción:</span>
+                <div className="info-desc">{product.description}</div>
+              </li>
+            </ul>
+
+            <div className="dialog-buttons">
+              <button
+                type="button"
+                disabled
+                title="Los comentarios aún no están implementados en el backend"
+              >
+                Comentar
+              </button>
+              {isOwner && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/product/${product._id}/edit`)}
+                  >
+                    Editar
+                  </button>
+                  <button type="button" onClick={() => setConfirming(true)}>
+                    Eliminar
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
