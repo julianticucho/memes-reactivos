@@ -50,8 +50,12 @@ const errorHandler = (
         error.name === "MongoServerError"
         && error.message.includes("E11000 duplicate key error")
     ) {
-        const field = error.message.includes("email") ? "email" : "username"
-        res.status(400).json({ error: `el ${field} ya existe` })
+        if (error.message.includes("reviewedUser")) {
+            res.status(400).json({ error: "ya dejaste una reseña para este usuario" })
+        } else {
+            const field = error.message.includes("email") ? "email" : "username"
+            res.status(400).json({ error: `el ${field} ya existe` })
+        }
     } else if (error.name === "TokenExpiredError") {
         res.status(401).json({ error: "token expirado" })
     } else {

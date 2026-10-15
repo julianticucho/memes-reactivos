@@ -1,6 +1,7 @@
 import express from "express"
 import Product from "../models/product.js"
 import User from "../models/user.js"
+import Comment from "../models/comment.js"
 import { withUser } from "../middleware.js"
 
 const router = express.Router()
@@ -56,6 +57,54 @@ router.get("/:id", (req, res, next) => {
         .catch((error) => next(error))
 })
 
+router.get("/:id/comments", async (req, res, next) => {
+    try {
+        const product = await Product.findById(req.params.id)
+        if (!product) {
+            return res.status(404).json({ error: "producto no encontrado" })
+        }
+        const comments = await Comment.find({ product: product._id })
+            .sort({ createdAt: 1 })
+        res.json(comments)
+    } catch (error) {
+        next(error)
+    }
+})
+
+router.post("/:id/comments", withUser, async (req, res, next) => {
+    try {
+        const product = await Product.findById(req.params.id)
+        if (!product) {
+            return res.status(404).json({ error: "producto no encontrado" })
+        }
+        if (product.user?.toString() === req.userId) {
+            return res
+                .status(403)
+                .json({ error: "no puedes comentar tu propia publicación" })
+        }
+        const user = await User.findById(req.userId)
+        if (!user) {
+            return res.status(401).json({ error: "usuario no encontrado" })
+        }
+        const text = req.body.text
+        if (!text || typeof text !== "string" || !text.trim()) {
+            return res
+                .status(400)
+                .json({ error: "el texto del comentario es obligatorio" })
+        }
+        const comment = new Comment({
+            text,
+            product: product._id,
+            user: user._id,
+            username: user.username,
+        })
+        const savedComment = await comment.save()
+        res.status(201).json(savedComment)
+    } catch (error) {
+        next(error)
+    }
+})
+
 router.put("/:id", withUser, async (req, res, next) => {
     try {
         const product = await Product.findById(req.params.id)
@@ -91,6 +140,7 @@ router.delete("/:id", withUser, async (req, res, next) => {
         if (product.user?.toString() !== req.userId) {
             return res.status(403).json({ error: "no autorizado" })
         }
+        await Comment.deleteMany({ product: product._id })
         await product.deleteOne()
         res.status(204).end()
     } catch (error) {

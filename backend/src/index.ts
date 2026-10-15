@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser"
 import productsRouter from "./controllers/products.js"
 import usersRouter from "./controllers/users.js"
 import loginRouter from "./controllers/login.js"
+import commentsRouter from "./controllers/comments.js"
+import reviewsRouter from "./controllers/reviews.js"
 import middleware from "./middleware.js"
 
 declare global {
@@ -27,6 +29,8 @@ app.get("/api/health", (_req, res) => {
 app.use("/api/products", productsRouter)
 app.use("/api/users", usersRouter)
 app.use("/api/login", loginRouter)
+app.use("/api/comments", commentsRouter)
+app.use("/api/users", reviewsRouter)
 
 const unknownEndpoint = (_req: express.Request, res: express.Response) => {
     res.status(404).send({ error: "unknown endpoint" })

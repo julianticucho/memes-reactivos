@@ -42,4 +42,18 @@ router.get("/", async (_req, res, next) => {
     }
 })
 
+// Perfil publico: username + contacto. La reputacion vive en
+// GET /:id/reviews, que tambien es publico.
+router.get("/:id", async (req, res, next) => {
+    try {
+        const user = await User.findById(req.params.id)
+        if (!user) {
+            return res.status(404).json({ error: "usuario no encontrado" })
+        }
+        res.json(user)
+    } catch (error) {
+        next(error)
+    }
+})
+
 export default router
