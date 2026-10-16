@@ -1,7 +1,4 @@
-/* Orden de capas: 'xp' va despues de 'base' (asi XP.css gana al preflight de
-   Tailwind) pero antes de 'components' y 'utilities' (asi nuestro CSS y las
-   clases de Tailwind siguen pudiendo sobrescribir a XP.css). */
-@layer theme, base, xp, components, utilities;
+@layer xp, components;
 
 @import "xp.css/dist/XP.css" layer(xp);
 
@@ -48,7 +45,6 @@ body {
   }
 
   .app-window .window-body {
-    background: #fff;
     border: 1px solid #919b9c;
     margin: 0 3px 3px;
     padding: 10px;
@@ -171,7 +167,7 @@ body {
      de tamano fijo y, debajo, la etiqueta del archivo. */
   .product-card .product-card-icon {
     width: 100%;
-    aspect-ratio: 1;
+    aspect-ratio: 1/1;
     box-sizing: border-box;
     border: 1px dotted #555;
     background: #fff;
@@ -180,6 +176,7 @@ body {
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    min-height: 0;
   }
 
   /* Hover: el marco puntilloso y el nombre se iluminan en azul, como un
@@ -272,17 +269,20 @@ body {
     margin: 0 auto;
   }
 
-  /* Monitor CRT que enmarca la imagen, como la vista previa de XP */
+  /* Monitor CRT que enmarca la imagen, como la vista previa de XP.
+     Centrado y con separacion máxima de 2em (arriba; el paginador
+     se encarga del espacio inferior). */
   .monitor {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 6px 0 10px;
+    margin: 2em auto;
   }
 
   .monitor-screen {
-    width: 264px;
-    height: 198px;
+    width: 80%;
+    min-height: 0px;
+    aspect-ratio: 1/1;
     box-sizing: border-box;
     background: #0a3a6b;
     border: 10px solid #d8d4c8;
@@ -316,6 +316,51 @@ body {
     border-radius: 0 0 9px 9px;
   }
 
+  /* Encabezado de la publicacion: nombre, precio y vendedor sobre
+     el visor de imagenes. */
+  .detail-header {
+    margin: 2px 0 0;
+  }
+
+  .detail-header .detail-name {
+    font-size: 13px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .detail-header .detail-price {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0046d5;
+    margin: 2px 0 0;
+  }
+
+  .detail-header .detail-seller {
+    font-size: 11px;
+    margin: 2px 0 0;
+  }
+
+  /* GroupBox XP.css (fieldset + legend) con el resto de la informacion.
+     XP.css deja el fieldset transparente: lo pintamos de blanco para
+     que destaque sobre el panel blanquecino de la pestaña. */
+  .tabs fieldset {
+    background: #fff;
+    margin: 0 0 10px;
+  }
+
+  .detail-description {
+    font-size: 11px;
+  }
+
+  .detail-description p {
+    margin: 0 0 4px;
+  }
+
+  .detail-description .info-desc {
+    white-space: pre-wrap;
+    margin: 6px 0 0;
+  }
+
   /* Paginador de imagenes (distinto del .pagination de la lista) */
   .image-pager {
     display: flex;
@@ -336,25 +381,10 @@ body {
     cursor: default;
   }
 
-  /* Caja de informacion con scroll. ul.tree-view ya trae el marco hundido
-     blanco de XP; al fijarle alto aparece la barra, que XP.css estiliza
-     con sus reglas ::-webkit-scrollbar. */
-  .info-box {
-    height: 132px;
-    overflow-y: auto;
-    margin: 0 0 12px;
-  }
-
-  .info-box li {
-    margin-top: 4px;
-  }
-
-  .info-box .info-label {
+  /* Etiquetas en negrita de los bloques de informacion (publicacion,
+     perfil, reseñas). Antes vivian bajo .info-box; ahora son globales. */
+  .info-label {
     font-weight: 700;
-  }
-
-  .info-box .info-desc {
-    white-space: pre-wrap;
   }
 
   /* Fila de botones abajo a la derecha, como OK / Cancelar / Aplicar */
@@ -390,7 +420,6 @@ body {
     margin: 0 3px 3px;
     padding: 10px;
     font-size: 11px;
-    background: #fff;
     border: 1px solid #919b9c;
   }
 
@@ -507,15 +536,156 @@ body {
     justify-content: flex-end;
     gap: 6px;
   }
+
+  /* ---- Pestañas ---- */
+  /* XP.css dibuja el cromo (menu[role=tablist] + article[role=tabpanel],
+     pestaña activa via aria-selected). Nosotros solo ajustamos la
+     tipografia del panel para que siga las 11px del resto de la app. */
+  .tabs article[role="tabpanel"] {
+    font-size: 11px;
+  }
+
+  /* Paleta invertida de las ventanas con pestañas (como el ejemplo de
+     "A Window With Tabs and Groups" de la documentación de XP.css):
+     cuerpo de ventana beige, pagina de pestaña blanquecina (el
+     gradiente por defecto de XP.css) y GroupBox blanco. El beige pisa
+     el blanco global de .app-window .window-body (misma especificidad,
+     gana el que venga despues en el archivo). */
+  .detail-window .window-body {
+    background: #ece9d8;
+  }
+
+  /* El perfil no es una ventana anidada: una tira beige llena el
+     window-body de la app (los margenes negativos cancelan su padding,
+     igual que la barra .finder-bar). */
+  .profile-page {
+    background: #ece9d8;
+    margin: -10px -10px 10px;
+    padding: 10px;
+  }
+
+  /* Info del perfil: tree-view sin altura fija, encajada entre la
+     cabecera (avatar + nombre) y las pestañas. */
+  .profile-info {
+    margin: 0 0 10px;
+  }
+
+  /* ---- Comentarios y reseñas ---- */
+  /* ul.tree-view ya trae el marco hundido blanco; al fijarle alto
+     aparece la barra, que XP.css estiliza con sus ::-webkit-scrollbar. */
+  .comment-list,
+  .review-list {
+    height: 180px;
+    overflow-y: auto;
+    margin: 0 0 10px;
+  }
+
+  .comment-meta,
+  .review-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .comment-author {
+    font-weight: 700;
+  }
+
+  .comment-date {
+    font-size: 10px;
+    color: #555;
+  }
+
+  .comment-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 4px;
+  }
+
+  .comment-actions button {
+    min-width: 0;
+    padding: 1px 6px;
+    font-size: 10px;
+  }
+
+  .comment-text {
+    margin: 2px 0 0;
+    white-space: pre-wrap;
+  }
+
+  .comment-form,
+  .comment-edit {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .comment-edit textarea,
+  .comment-form textarea {
+    resize: vertical;
+    font-family: inherit;
+    font-size: 11px;
+  }
+
+  .field-error {
+    color: #a00000;
+    margin: 0;
+  }
+
+  /* ---- Reputación ---- */
+  .reputation-summary {
+    margin: 0 0 8px;
+  }
+
+  /* Insignia +1/-1 junto a cada reseña */
+  .vote-badge {
+    display: inline-block;
+    min-width: 22px;
+    text-align: center;
+    padding: 1px 4px;
+    font-size: 10px;
+    font-weight: 700;
+    border: 1px solid #919b9c;
+    background: #fff;
+  }
+
+  .vote-badge.vote-up {
+    color: #006600;
+  }
+
+  .vote-badge.vote-down {
+    color: #a00000;
+  }
+
+  /* La reseña propia se destaca con el beige de los paneles XP */
+  .review-mine {
+    background: #ffffe1;
+  }
+
+  .review-votes {
+    display: flex;
+    gap: 16px;
+  }
+
+  .review-votes .field-row {
+    margin: 0;
+  }
+
+  .my-review {
+    margin-top: 10px;
+  }
+
+  .my-review .dialog-buttons {
+    margin-top: 6px;
+  }
 }
 
 @keyframes toast-in {
   from {
-    transform: translateX(110%);
     opacity: 0;
   }
   to {
-    transform: translateX(0);
     opacity: 1;
   }
 }
