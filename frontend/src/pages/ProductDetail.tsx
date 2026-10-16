@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import type { Product } from "../types/products";
 import type { User } from "../types/users";
 import productsService from "../services/products";
+import Tabs from "../components/Tabs";
+import CommentSection from "../components/CommentSection";
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleString("es-CL", {
@@ -22,6 +24,8 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
   const [loading, setLoading] = useState(true);
   const [confirming, setConfirming] = useState(false);
   const [imgIdx, setImgIdx] = useState(0);
+  const [activeTab, setActiveTab] = useState("publicacion");
+  const [commentCount, setCommentCount] = useState(0);
 
   useEffect(() => {
     if (!id) return;
@@ -30,6 +34,8 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
       .then((data) => {
         setProduct(data);
         setImgIdx(0);
+        setActiveTab("publicacion");
+        setCommentCount(0);
       })
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -45,8 +51,8 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
         navigate("/");
       })
       .catch((err) => {
-        const msg
-          = err?.response?.data?.error || "Error al eliminar (¿sesión expirada?)";
+        const msg =
+          err?.response?.data?.error || "Error al eliminar (¿sesión expirada?)";
         setToast({ message: msg, severity: "error" });
       });
   };
@@ -92,99 +98,133 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
           </div>
 
           <div className="window-body">
-            <div className="monitor">
-              <div className="monitor-screen">
-                {total > 0
-                  ? (
-                      <img
-                        src={images[imgIdx]}
-                        alt={`${product.name} ${imgIdx + 1} de ${total}`}
-                      />
-                    )
-                  : (
-                      <span className="no-image">Sin imagen</span>
-                    )}
-              </div>
-              <div className="monitor-stand" />
-            </div>
+            <Tabs
+              ariaLabel="Detalle del producto"
+              active={activeTab}
+              onChange={setActiveTab}
+              tabs={[
+                {
+                  key: "publicacion",
+                  label: "Publicación",
+                  content: (
+                    <>
+                      <div className="detail-header">
+                        <p>
+                          <span className="detail-name">{product.name} </span>
+                          <span className="detail-price">${product.price} </span>
+                        </p>
+                        <p className="detail-seller">
+                          <span className="info-label">Vendedor: </span>
+                          {product.user ? (
+                            <Link to={`/profile/${product.user}`}>
+                              {product.seller}
+                            </Link>
+                          ) : (
+                            product.seller
+                          )}
+                        </p>
+                      </div>
 
-            {total > 1 && (
-              <div className="image-pager">
-                <button
-                  type="button"
-                  aria-label="Imagen anterior"
-                  disabled={imgIdx === 0}
-                  onClick={() => setImgIdx((i) => i - 1)}
-                >
-                  &lt;
-                </button>
-                <span>
-                  {imgIdx + 1}
-                  {" / "}
-                  {total}
-                </span>
-                <button
-                  type="button"
-                  aria-label="Imagen siguiente"
-                  disabled={imgIdx === total - 1}
-                  onClick={() => setImgIdx((i) => i + 1)}
-                >
-                  &gt;
-                </button>
-              </div>
-            )}
+                      <div className="monitor">
+                        <div className="monitor-screen">
+                          {total > 0
+                            ? (
+                                <img
+                                  src={images[imgIdx]}
+                                  alt={`${product.name} ${imgIdx + 1} de ${total}`}
+                                />
+                              )
+                            : (
+                              <span className="no-image">Sin imagen</span>
+                            )}
+                        </div>
+                        <div className="monitor-stand" />
+                      </div>
 
-            <p>Información:</p>
-            <ul className="tree-view info-box">
-              <li>
-                <span className="info-label">Precio: </span>${product.price}
-              </li>
-              <li>
-                <span className="info-label">Vendedor: </span>
-                {product.seller}
-              </li>
-              <li>
-                <span className="info-label">Categoría: </span>
-                {product.category}
-              </li>
-              <li>
-                <span className="info-label">Publicado: </span>
-                {formatDate(product.createdAt)}
-              </li>
-              {product.updatedAt !== product.createdAt && (
-                <li>
-                  <span className="info-label">Actualizado: </span>
-                  {formatDate(product.updatedAt)}
-                </li>
-              )}
-              <li>
-                <span className="info-label">Descripción:</span>
-                <div className="info-desc">{product.description}</div>
-              </li>
-            </ul>
+                      {total > 1 && (
+                        <div className="image-pager">
+                          <button
+                            type="button"
+                            aria-label="Imagen anterior"
+                            disabled={imgIdx === 0}
+                            onClick={() => setImgIdx((i) => i - 1)}
+                          >
+                            &lt;
+                          </button>
+                          <span>
+                            {imgIdx + 1}
+                            {" / "}
+                            {total}
+                          </span>
+                          <button
+                            type="button"
+                            aria-label="Imagen siguiente"
+                            disabled={imgIdx === total - 1}
+                            onClick={() => setImgIdx((i) => i + 1)}
+                          >
+                            &gt;
+                          </button>
+                        </div>
+                      )}
 
-            <div className="dialog-buttons">
-              <button
-                type="button"
-                disabled
-                title="Los comentarios aún no están implementados en el backend"
-              >
-                Comentar
-              </button>
-              {isOwner && (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => navigate(`/product/${product._id}/edit`)}
-                  >
-                    Editar
-                  </button>
-                  <button type="button" onClick={() => setConfirming(true)}>
-                    Eliminar
-                  </button>
-                </>
-              )}
-            </div>
+                      <fieldset>
+                        <legend>Mas informacion</legend>
+                        <p>
+                          <span className="info-label">Descripción: </span>
+                          {product.description}
+                        </p>
+                        <p>
+                          <span className="info-label">Categoría: </span>
+                          {product.category}
+                        </p>
+                        <p>
+                          <span className="info-label">Publicado: </span>
+                          {formatDate(product.createdAt)}
+                          {product.updatedAt !== product.createdAt && (
+                            <>
+                              {" · "}
+                              <span className="info-label">Actualizado: </span>
+                              {formatDate(product.updatedAt)}
+                            </>
+                          )}
+                        </p>
+                      </fieldset>
+
+                      {isOwner && (
+                        <div className="dialog-buttons">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              navigate(`/product/${product._id}/edit`)
+                            }
+                          >
+                            Editar
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setConfirming(true)}
+                          >
+                            Eliminar
+                          </button>
+                        </div>
+                      )}
+                    </>
+                  ),
+                },
+                {
+                  key: "comentarios",
+                  label: `Comentarios (${commentCount})`,
+                  content: (
+                    <CommentSection
+                      productId={product._id}
+                      user={user}
+                      setToast={setToast}
+                      onCountChange={setCommentCount}
+                    />
+                  ),
+                },
+              ]}
+            />
           </div>
         </div>
       </div>

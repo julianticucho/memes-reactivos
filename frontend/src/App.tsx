@@ -89,8 +89,14 @@ function App() {
                   <Route
                     path="/profile"
                     element={
-                      user ? <Profile user={user} /> : <Navigate to="/login" replace />
+                      user
+                        ? <Profile user={user} setToast={setToast} />
+                        : <Navigate to="/login" replace />
                     }
+                  />
+                  <Route
+                    path="/profile/:id"
+                    element={<Profile user={user} setToast={setToast} />}
                   />
                   <Route
                     path="/login"
