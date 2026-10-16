@@ -4,15 +4,7 @@
       "formatter": "prettier",
       "format_on_save": "on",
     },
-    "React TSX": {
-      "formatter": "prettier",
-      "format_on_save": "on",
-    },
     "JavaScript": {
-      "formatter": "prettier",
-      "format_on_save": "on",
-    },
-    "React JS": {
       "formatter": "prettier",
       "format_on_save": "on",
     },
