@@ -80,7 +80,12 @@ function App() {
               )
             : (
                 <Routes>
-                  <Route path="/" element={<Home />} />
+                  <Route path="/" element={<Home />}>
+                    <Route
+                      path="product/:id"
+                      element={<ProductDetail user={user} setToast={setToast} />}
+                    />
+                  </Route>
                   <Route
                     path="/profile"
                     element={
@@ -110,10 +115,6 @@ function App() {
                         ? <NewProduct setToast={setToast} />
                         : <Navigate to="/login" replace />
                     }
-                  />
-                  <Route
-                    path="/product/:id"
-                    element={<ProductDetail user={user} setToast={setToast} />}
                   />
                   <Route
                     path="/product/:id/edit"
