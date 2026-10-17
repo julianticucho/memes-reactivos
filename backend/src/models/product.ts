@@ -6,6 +6,8 @@ mongoose.connect(url).catch(() => {
     console.log("error conectando a mongodb")
 })
 
+export type ProductStatus = "active" | "pending"
+
 export interface ProductDocument extends mongoose.Document {
     name: string
     description: string
@@ -14,6 +16,7 @@ export interface ProductDocument extends mongoose.Document {
     seller: string
     category: string
     user: mongoose.Types.ObjectId | null
+    status: ProductStatus
     createdAt: Date
     updatedAt: Date
 }
@@ -52,6 +55,11 @@ const productSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         default: null,
+    },
+    status: {
+        type: String,
+        enum: ["active", "pending"],
+        default: "active",
     },
 }, { timestamps: true })
 

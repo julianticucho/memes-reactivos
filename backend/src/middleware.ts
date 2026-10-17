@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express"
 import jwt from "jsonwebtoken"
+import User, { type Role } from "./models/user.js"
 
 const JWT_SECRET = process.env.JWT_SECRET || "my_secret"
 
@@ -34,6 +35,44 @@ export const withUser = async (
         res.status(401).json({ error: "token inválido" })
     }
 }
+
+// solo para lecturas: no exige CSRF y un token inválido o vencido cuenta como anónimo
+export const withOptionalUser = (
+    req: Request,
+    _res: Response,
+    next: NextFunction,
+): void => {
+    const token = req.cookies?.token
+    if (token) {
+        try {
+            const decodedToken = jwt.verify(token, JWT_SECRET)
+            if (typeof decodedToken === "object" && decodedToken.id) {
+                req.userId = decodedToken.id
+            }
+        } catch {
+            // anónimo
+        }
+    }
+    next()
+}
+
+export const requireRole =(...roles: Role[]) =>
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const user = await User.findById(req.userId).select("role")
+            if (!user) {
+                res.status(401).json({ error: "usuario no encontrado" })
+                return
+            }
+            if (!roles.includes(user.role)) {
+                res.status(403).json({ error: "no autorizado" })
+                return
+            }
+            next()
+        } catch (error) {
+            next(error)
+        }
+    }
 
 const errorHandler = (
     error: { name: string, message: string },

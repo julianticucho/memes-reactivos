@@ -1,10 +1,14 @@
 import mongoose from "mongoose"
 
+export const ROLES = ["user", "moderator", "admin"] as const
+export type Role = (typeof ROLES)[number]
+
 export interface UserData {
     id: string
     username: string
     email: string
     passwordHash: string
+    role: Role
 }
 
 export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -18,6 +22,7 @@ const userSchema = new mongoose.Schema<UserData>({
         match: [EMAIL_REGEX, "email inválido"],
     },
     passwordHash: { type: String, required: true },
+    role: { type: String, enum: ROLES, default: "user" },
 })
 
 userSchema.set("toJSON", {

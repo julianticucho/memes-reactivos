@@ -7,6 +7,11 @@ import mongoose from "mongoose"
 import User from "./models/user.js"
 import Product from "./models/product.js"
 
+const STAFF = [
+    { username: "admin", role: "admin" },
+    { username: "moderador", role: "moderator" },
+] as const
+
 const PRODUCTS_PER_USER = 8
 const IMAGES_PER_PRODUCT = 3
 
@@ -75,6 +80,16 @@ const main = async () => {
     await Product.deleteMany({})
 
     const passwordHash = await bcrypt.hash("123", 10)
+
+    for (const { username, role } of STAFF) {
+        await new User({
+            username,
+            email: `${username}@gmail.com`,
+            passwordHash,
+            role,
+        }).save()
+        console.log(`  ${username}: rol ${role}`)
+    }
 
     let productNumber = 1
     for (let i = 1; i <= userCount; i++) {
