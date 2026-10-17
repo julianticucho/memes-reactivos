@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import type { User } from "../types/users";
 import authService from "../services/auth";
+import { isStaff } from "../utils/roles";
 
 interface NavbarProps {
   user: User | null;
@@ -26,6 +27,7 @@ const Navbar = ({ user, setUser, setToast }: NavbarProps) => {
     <nav className="menu-bar">
       <Link to="/">Productos</Link>
       <Link to="/product/new">Publicar</Link>
+      {isStaff(user) && <Link to="/moderation">Moderación</Link>}
 
       <span className="menu-spacer" />
 

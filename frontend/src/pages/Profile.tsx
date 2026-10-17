@@ -37,11 +37,14 @@ const Profile = ({ user, setToast }: ProfileProps) => {
         setProfile(profileData);
         setReviewsData(reviews);
         setActiveTab("productos");
-        return productsService
-          .getAll()
-          .then((all) =>
-            setProducts(all.filter((p) => p.seller === profileData.username)),
-          );
+        const loadProducts = profileData.id === user?.id
+          ? productsService.getMine()
+          : productsService
+              .getAll()
+              .then((all) =>
+                all.filter((p) => p.seller === profileData.username),
+              );
+        return loadProducts.then(setProducts);
       })
       .catch(() => setProfile(null))
       .finally(() => setLoading(false));

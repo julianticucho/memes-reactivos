@@ -22,6 +22,7 @@ const DRUGS = [
 
 const WEAPONS = [
     "arma",
+    "fusil",
     "pistola",
     "revolver",
     "rifle",

@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import type { Product } from "../types/products";
 import type { User } from "../types/users";
 import productsService from "../services/products";
 import Tabs from "../components/Tabs";
 import CommentSection from "../components/CommentSection";
+import { isStaff } from "../utils/roles";
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleString("es-CL", {
@@ -20,6 +21,8 @@ interface ProductDetailProps {
 const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
+  const backTo = (location.state as { from?: string } | null)?.from ?? "/";
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [confirming, setConfirming] = useState(false);
@@ -48,7 +51,7 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
       .remove(product._id)
       .then(() => {
         setToast({ message: "Producto eliminado", severity: "success" });
-        navigate("/");
+        navigate(backTo);
       })
       .catch((err) => {
         const msg =
@@ -57,7 +60,7 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
       });
   };
 
-  const handleClose = () => navigate("/");
+  const handleClose = () => navigate(backTo);
 
   if (loading || !product) {
     return (
@@ -108,6 +111,12 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
                   label: "Publicación",
                   content: (
                     <>
+                      {product.status === "pending" && (
+                        <p>
+                          <strong>En revisión: </strong>
+                          esta publicación aún no es visible para el público.
+                        </p>
+                      )}
                       <div className="detail-header">
                         <p>
                           <span className="detail-name">{product.name} </span>
@@ -190,16 +199,18 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
                         </p>
                       </fieldset>
 
-                      {isOwner && (
+                      {(isOwner || isStaff(user)) && (
                         <div className="dialog-buttons">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              navigate(`/product/${product._id}/edit`)
-                            }
-                          >
-                            Editar
-                          </button>
+                          {isOwner && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                navigate(`/product/${product._id}/edit`)
+                              }
+                            >
+                              Editar
+                            </button>
+                          )}
                           <button
                             type="button"
                             onClick={() => setConfirming(true)}

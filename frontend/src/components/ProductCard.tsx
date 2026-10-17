@@ -20,6 +20,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
         <p className="product-name">{product.name}</p>
         <p className="product-seller">{product.seller}</p>
         <p className="product-price">${product.price}</p>
+        {product.status === "pending" && (
+          <p className="product-pending">En revisión</p>
+        )}
       </div>
     </div>
   );

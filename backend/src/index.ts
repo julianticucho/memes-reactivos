@@ -3,6 +3,7 @@ import express from "express"
 import cors from "cors"
 import cookieParser from "cookie-parser"
 import productsRouter from "./controllers/products.js"
+import moderationRouter from "./controllers/moderation.js"
 import usersRouter from "./controllers/users.js"
 import loginRouter from "./controllers/login.js"
 import commentsRouter from "./controllers/comments.js"
@@ -27,6 +28,7 @@ app.get("/api/health", (_req, res) => {
 })
 
 app.use("/api/products", productsRouter)
+app.use("/api/moderation", moderationRouter)
 app.use("/api/users", usersRouter)
 app.use("/api/login", loginRouter)
 app.use("/api/comments", commentsRouter)

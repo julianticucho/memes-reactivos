@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
 import type { User } from "./types/users";
 import authService from "./services/auth";
+import { isStaff } from "./utils/roles";
 
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
@@ -12,6 +13,7 @@ import Register from "./pages/Register";
 import NewProduct from "./pages/NewProduct";
 import EditProduct from "./pages/EditProduct";
 import ProductDetail from "./pages/ProductDetail";
+import Moderation from "./pages/Moderation";
 
 function App() {
   const [toast, setToast] = useState<{
@@ -128,6 +130,14 @@ function App() {
                       user
                         ? <EditProduct user={user} setToast={setToast} />
                         : <Navigate to="/login" replace />
+                    }
+                  />
+                  <Route
+                    path="/moderation"
+                    element={
+                      isStaff(user)
+                        ? <Moderation setToast={setToast} />
+                        : <Navigate to="/" replace />
                     }
                   />
                   <Route path="*" element={<h1>Página no encontrada</h1>} />

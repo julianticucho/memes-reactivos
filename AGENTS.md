@@ -38,7 +38,7 @@ No formatter script. `.vscode/` and `.zed/` format-on-save use Prettier defaults
 
 ```bash
 cd backend && npm run seed        # DESTRUCTIVE: drops ALL users+products; default 2 users
-cd backend && npm run seed -- 5   # N users usuario_1..N (password "123"), 8 products each
+cd backend && npm run seed -- 5   # N users usuario_1..N (password "123"), 8 products each, users admin and moderator 
 ```
 
 No combined "start all" script. Start both terminals manually.

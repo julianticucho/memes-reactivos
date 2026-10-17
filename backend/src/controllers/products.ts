@@ -17,16 +17,16 @@ const validateProductBody = (body: { name?: unknown, description?: unknown, pric
 const reviewStatus = (body: { name: string, description: string, category: string }): ProductStatus =>
     needsReview(body.name, body.description, body.category) ? "pending" : "active"
 
-const canSeePending = async (product: ProductDocument, userId?: string): Promise<boolean> => {
+const isStaff = async (userId?: string): Promise<boolean> => {
     if (!userId) {
         return false
-    }
-    if (product.user?.toString() === userId) {
-        return true
     }
     const user = await User.findById(userId).select("role")
     return user?.role === "moderator" || user?.role === "admin"
 }
+
+const canSeePending = async (product: ProductDocument, userId?: string): Promise<boolean> =>
+    !!userId && (product.user?.toString() === userId || await isStaff(userId))
 
 const findVisibleProduct = async (id: string | string[], userId?: string): Promise<ProductDocument | null> => {
     const product = await Product.findById(id)
@@ -172,7 +172,7 @@ router.delete("/:id", withUser, async (req, res, next) => {
         if (!product) {
             return res.status(404).json({ error: "producto no encontrado" })
         }
-        if (product.user?.toString() !== req.userId) {
+        if (product.user?.toString() !== req.userId && !(await isStaff(req.userId))) {
             return res.status(403).json({ error: "no autorizado" })
         }
         await Comment.deleteMany({ product: product._id })

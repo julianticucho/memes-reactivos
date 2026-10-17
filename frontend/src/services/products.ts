@@ -6,6 +6,12 @@ const getAll = async () => {
   return axios.get<Product[]>("/api/products").then((response) => response.data);
 };
 
+const getMine = async () => {
+  return axiosSecure
+    .get<Product[]>("/api/products/mine")
+    .then((response) => response.data);
+};
+
 interface ProductCreateData {
   name: string;
   description: string;
@@ -38,6 +44,7 @@ const getById = async (id: string) => {
 
 export default {
   getAll,
+  getMine,
   create,
   update,
   remove,

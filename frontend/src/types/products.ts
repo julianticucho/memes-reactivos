@@ -7,6 +7,7 @@ export interface Product {
   seller: string
   category: string
   user?: string | null
+  status: "active" | "pending"
   createdAt: string
   updatedAt: string
 }

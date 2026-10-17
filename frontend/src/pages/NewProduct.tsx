@@ -76,9 +76,22 @@ const NewProduct = ({ setToast, product }: NewProductProps) => {
       : productsService.create(data);
     request
       .then((saved) => {
+        const inReview = saved.status === "pending";
         if (product) {
-          setToast({ message: "Producto actualizado", severity: "success" });
+          setToast({
+            message: inReview
+              ? "Producto actualizado. Tu publicación está siendo revisada."
+              : "Producto actualizado",
+            severity: "success",
+          });
           navigate(`/product/${saved._id}`);
+        } else if (inReview) {
+          setToast({
+            message:
+              "Tu publicación está siendo revisada. Se publicará cuando sea aprobada.",
+            severity: "success",
+          });
+          navigate("/profile");
         } else {
           setToast({ message: "Producto publicado", severity: "success" });
           navigate("/");
