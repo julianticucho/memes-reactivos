@@ -13,10 +13,7 @@ const CATEGORIES = [
 ];
 
 interface NewProductProps {
-  setToast: (toast: {
-    message: string;
-    severity: "success" | "error";
-  }) => void;
+  setToast: (toast: { message: string; severity: "success" | "error" }) => void;
   product?: Product;
 }
 
@@ -98,11 +95,11 @@ const NewProduct = ({ setToast, product }: NewProductProps) => {
         }
       })
       .catch((err) => {
-        const msg
-          = err?.response?.data?.error
-            || (product
-              ? "Error al actualizar (¿sesión expirada?)"
-              : "Error al publicar (¿sesión expirada?)");
+        const msg =
+          err?.response?.data?.error ||
+          (product
+            ? "Error al actualizar (¿sesión expirada?)"
+            : "Error al publicar (¿sesión expirada?)");
         setToast({ message: msg, severity: "error" });
       });
   };
@@ -269,7 +266,9 @@ const NewProduct = ({ setToast, product }: NewProductProps) => {
           </div>
         </div>
 
-        <button type="submit">{product ? "Guardar cambios" : "Publicar"}</button>
+        <button type="submit">
+          {product ? "Guardar cambios" : "Publicar"}
+        </button>
       </form>
     </>
   );

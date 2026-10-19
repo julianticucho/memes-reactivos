@@ -7,10 +7,7 @@ import NewProduct from "./NewProduct";
 
 interface EditProductProps {
   user: User;
-  setToast: (toast: {
-    message: string;
-    severity: "success" | "error";
-  }) => void;
+  setToast: (toast: { message: string; severity: "success" | "error" }) => void;
 }
 
 const EditProduct = ({ user, setToast }: EditProductProps) => {

@@ -6,10 +6,7 @@ import { isStaff } from "../utils/roles";
 interface NavbarProps {
   user: User | null;
   setUser: (user: User | null) => void;
-  setToast: (toast: {
-    message: string;
-    severity: "success" | "error";
-  }) => void;
+  setToast: (toast: { message: string; severity: "success" | "error" }) => void;
 }
 
 const Navbar = ({ user, setUser, setToast }: NavbarProps) => {
@@ -31,23 +28,21 @@ const Navbar = ({ user, setUser, setToast }: NavbarProps) => {
 
       <span className="menu-spacer" />
 
-      {user
-        ? (
-            <>
-              <Link to="/profile" className="menu-user">
-                {user.username}
-              </Link>
-              <button type="button" onClick={handleLogout}>
-                Cerrar sesión
-              </button>
-            </>
-          )
-        : (
-            <>
-              <Link to="/login">Iniciar sesión</Link>
-              <Link to="/register">Registrarse</Link>
-            </>
-          )}
+      {user ? (
+        <>
+          <Link to="/profile" className="menu-user">
+            {user.username}
+          </Link>
+          <button type="button" onClick={handleLogout}>
+            Cerrar sesión
+          </button>
+        </>
+      ) : (
+        <>
+          <Link to="/login">Iniciar sesión</Link>
+          <Link to="/register">Registrarse</Link>
+        </>
+      )}
     </nav>
   );
 };

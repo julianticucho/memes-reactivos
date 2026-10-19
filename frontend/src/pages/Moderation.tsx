@@ -41,7 +41,10 @@ const Moderation = ({ setToast }: ModerationProps) => {
       .approve(product._id)
       .then(() => {
         removeFromList(product._id);
-        setToast({ message: `«${product.name}» aprobado`, severity: "success" });
+        setToast({
+          message: `«${product.name}» aprobado`,
+          severity: "success",
+        });
       })
       .catch((err) => {
         const msg = err?.response?.data?.error || "Error al aprobar";
@@ -57,7 +60,10 @@ const Moderation = ({ setToast }: ModerationProps) => {
       .remove(product._id)
       .then(() => {
         removeFromList(product._id);
-        setToast({ message: `«${product.name}» eliminado`, severity: "success" });
+        setToast({
+          message: `«${product.name}» eliminado`,
+          severity: "success",
+        });
       })
       .catch((err) => {
         const msg = err?.response?.data?.error || "Error al eliminar";
@@ -72,7 +78,9 @@ const Moderation = ({ setToast }: ModerationProps) => {
       <h1>Moderación ({products.length} pendientes)</h1>
 
       {products.length === 0 ? (
-        <p className="empty-state">No hay publicaciones pendientes de revisión</p>
+        <p className="empty-state">
+          No hay publicaciones pendientes de revisión
+        </p>
       ) : (
         products.map((product) => (
           <fieldset key={product._id} className="moderation-item">
@@ -86,7 +94,9 @@ const Moderation = ({ setToast }: ModerationProps) => {
                 <p>
                   <span className="info-label">Vendedor: </span>
                   {product.user ? (
-                    <Link to={`/profile/${product.user}`}>{product.seller}</Link>
+                    <Link to={`/profile/${product.user}`}>
+                      {product.seller}
+                    </Link>
                   ) : (
                     product.seller
                   )}
@@ -111,7 +121,8 @@ const Moderation = ({ setToast }: ModerationProps) => {
                 onClick={() =>
                   navigate(`/product/${product._id}`, {
                     state: { from: "/moderation" },
-                  })}
+                  })
+                }
               >
                 Ver detalle
               </button>

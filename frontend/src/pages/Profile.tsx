@@ -24,7 +24,7 @@ const Profile = ({ user, setToast }: ProfileProps) => {
   const [reviewsData, setReviewsData] = useState<ReviewsResponse | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("productos");
+  const [activeTab, setActiveTab] = useState("products");
 
   useEffect(() => {
     if (!profileId) return;
@@ -36,14 +36,15 @@ const Profile = ({ user, setToast }: ProfileProps) => {
       .then(([profileData, reviews]) => {
         setProfile(profileData);
         setReviewsData(reviews);
-        setActiveTab("productos");
-        const loadProducts = profileData.id === user?.id
-          ? productsService.getMine()
-          : productsService
-              .getAll()
-              .then((all) =>
-                all.filter((p) => p.seller === profileData.username),
-              );
+        setActiveTab("products");
+        const loadProducts =
+          profileData.id === user?.id
+            ? productsService.getMine()
+            : productsService
+                .getAll()
+                .then((all) =>
+                  all.filter((p) => p.seller === profileData.username),
+                );
         return loadProducts.then(setProducts);
       })
       .catch(() => setProfile(null))
@@ -107,12 +108,12 @@ const Profile = ({ user, setToast }: ProfileProps) => {
         onChange={setActiveTab}
         tabs={[
           {
-            key: "productos",
+            key: "products",
             label: `Productos (${products.length})`,
             content: productsTab,
           },
           {
-            key: "resenas",
+            key: "reviews",
             label: `Reseñas (${stats.count})`,
             content: reviewsTab,
           },

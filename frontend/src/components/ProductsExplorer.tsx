@@ -55,8 +55,8 @@ const ProductsExplorer = ({ products }: ProductsExplorerProps) => {
 
   const filtered = products.filter((p) => {
     const matchesName = p.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory
-      = selectedCategory === "Todas" || p.category === selectedCategory;
+    const matchesCategory =
+      selectedCategory === "Todas" || p.category === selectedCategory;
     return matchesName && matchesCategory;
   });
 
@@ -131,23 +131,21 @@ const ProductsExplorer = ({ products }: ProductsExplorerProps) => {
             ‹ Anterior
           </button>
           {getPageItems(totalPages, current).map((item, i) =>
-            typeof item === "number"
-              ? (
-                  <button
-                    key={i}
-                    type="button"
-                    className={item === current ? "page-current" : undefined}
-                    aria-current={item === current ? "page" : undefined}
-                    onClick={() => setPage(item)}
-                  >
-                    {item}
-                  </button>
-                )
-              : (
-                  <span key={i} className="ellipsis" aria-hidden="true">
-                    …
-                  </span>
-                ),
+            typeof item === "number" ? (
+              <button
+                key={i}
+                type="button"
+                className={item === current ? "page-current" : undefined}
+                aria-current={item === current ? "page" : undefined}
+                onClick={() => setPage(item)}
+              >
+                {item}
+              </button>
+            ) : (
+              <span key={i} className="ellipsis" aria-hidden="true">
+                …
+              </span>
+            ),
           )}
           <button
             type="button"

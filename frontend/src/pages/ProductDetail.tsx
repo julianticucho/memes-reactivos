@@ -120,7 +120,9 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
                       <div className="detail-header">
                         <p>
                           <span className="detail-name">{product.name} </span>
-                          <span className="detail-price">${product.price} </span>
+                          <span className="detail-price">
+                            ${product.price}{" "}
+                          </span>
                         </p>
                         <p className="detail-seller">
                           <span className="info-label">Vendedor: </span>
@@ -136,16 +138,14 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
 
                       <div className="monitor">
                         <div className="monitor-screen">
-                          {total > 0
-                            ? (
-                                <img
-                                  src={images[imgIdx]}
-                                  alt={`${product.name} ${imgIdx + 1} de ${total}`}
-                                />
-                              )
-                            : (
-                              <span className="no-image">Sin imagen</span>
-                            )}
+                          {total > 0 ? (
+                            <img
+                              src={images[imgIdx]}
+                              alt={`${product.name} ${imgIdx + 1} de ${total}`}
+                            />
+                          ) : (
+                            <span className="no-image">Sin imagen</span>
+                          )}
                         </div>
                         <div className="monitor-stand" />
                       </div>

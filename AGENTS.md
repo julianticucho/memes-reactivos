@@ -2,8 +2,9 @@
 
 ## Layout
 
-Two independent packages. No monorepo tooling, no root scripts. `hitos/` is
-gitignored (milestone deliverables, not source).
+Two independent packages. No monorepo tooling (the root `package.json` holds
+formatting tooling only, no `workspaces`). `hitos/` is gitignored (milestone
+deliverables, not source).
 
 ```
 backend/   Express 5 + Mongoose + MongoDB (ESM, tsx)
@@ -31,14 +32,21 @@ cd frontend && npm run lint   # eslint .
 cd frontend && npx tsc -b     # typecheck only (project references)
 ```
 
+# Root — formatting (Prettier defaults, one config-free setup for both packages)
+
+npm run format # prettier --write . (whole repo)
+npm run format:check # prettier --check .
+
 Verify changes with: backend `npm run build` · frontend `npx tsc -b && npm run lint`.
 
-No formatter script. `.vscode/` and `.zed/` format-on-save use Prettier defaults
-(no config, not a repo dependency) — match surrounding style, don't mass-reformat.
+Formatting is enforced by a husky + lint-staged pre-commit hook that runs
+`prettier --write` on staged files automatically. Fresh clone: run `npm install`
+at the root once so the hook gets installed (`prepare` script). Skip the hook in
+a pinch with `git commit --no-verify`.
 
 ```bash
 cd backend && npm run seed        # DESTRUCTIVE: drops ALL users+products; default 2 users
-cd backend && npm run seed -- 5   # N users usuario_1..N (password "123"), 8 products each, users admin and moderator 
+cd backend && npm run seed -- 5   # N users usuario_1..N (password "123"), 8 products each, users admin and moderator
 ```
 
 No combined "start all" script. Start both terminals manually.

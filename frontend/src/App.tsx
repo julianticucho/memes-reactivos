@@ -43,13 +43,7 @@ function App() {
         <div className="toast-window window" role="status" aria-live="polite">
           <div className="title-bar">
             <div className="title-bar-text">
-              {toast.severity === "success"
-                ? (
-                    "Éxito"
-                  )
-                : (
-                    "Error"
-                  )}
+              {toast.severity === "success" ? "Éxito" : "Error"}
             </div>
             <div className="title-bar-controls">
               <button
@@ -76,78 +70,90 @@ function App() {
         <Navbar user={user} setUser={setUser} setToast={setToast} />
 
         <div className="window-body">
-          {restoring
-            ? (
-                <p>Cargando...</p>
-              )
-            : (
-                <Routes>
-                  <Route path="/" element={<Home />}>
-                    <Route
-                      path="product/:id"
-                      element={<ProductDetail user={user} setToast={setToast} />}
-                    />
-                  </Route>
-                  <Route
-                    path="/profile"
-                    element={
-                      user
-                        ? <Profile user={user} setToast={setToast} />
-                        : <Navigate to="/login" replace />
-                    }
-                  />
-                  <Route
-                    path="/profile/:id"
-                    element={<Profile user={user} setToast={setToast} />}
-                  />
-                  <Route
-                    path="/login"
-                    element={
-                      user
-                        ? <Navigate to="/" replace />
-                        : <Login setUser={setUser} setToast={setToast} />
-                    }
-                  />
-                  <Route
-                    path="/register"
-                    element={
-                      user
-                        ? <Navigate to="/" replace />
-                        : <Register setToast={setToast} />
-                    }
-                  />
-                  <Route
-                    path="/product/new"
-                    element={
-                      user
-                        ? <NewProduct setToast={setToast} />
-                        : <Navigate to="/login" replace />
-                    }
-                  />
-                  <Route
-                    path="/product/:id/edit"
-                    element={
-                      user
-                        ? <EditProduct user={user} setToast={setToast} />
-                        : <Navigate to="/login" replace />
-                    }
-                  />
-                  <Route
-                    path="/moderation"
-                    element={
-                      isStaff(user)
-                        ? <Moderation setToast={setToast} />
-                        : <Navigate to="/" replace />
-                    }
-                  />
-                  <Route path="*" element={<h1>Página no encontrada</h1>} />
-                </Routes>
-              )}
+          {restoring ? (
+            <p>Cargando...</p>
+          ) : (
+            <Routes>
+              <Route path="/" element={<Home />}>
+                <Route
+                  path="product/:id"
+                  element={<ProductDetail user={user} setToast={setToast} />}
+                />
+              </Route>
+              <Route
+                path="/profile"
+                element={
+                  user ? (
+                    <Profile user={user} setToast={setToast} />
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
+                }
+              />
+              <Route
+                path="/profile/:id"
+                element={<Profile user={user} setToast={setToast} />}
+              />
+              <Route
+                path="/login"
+                element={
+                  user ? (
+                    <Navigate to="/" replace />
+                  ) : (
+                    <Login setUser={setUser} setToast={setToast} />
+                  )
+                }
+              />
+              <Route
+                path="/register"
+                element={
+                  user ? (
+                    <Navigate to="/" replace />
+                  ) : (
+                    <Register setToast={setToast} />
+                  )
+                }
+              />
+              <Route
+                path="/product/new"
+                element={
+                  user ? (
+                    <NewProduct setToast={setToast} />
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
+                }
+              />
+              <Route
+                path="/product/:id/edit"
+                element={
+                  user ? (
+                    <EditProduct user={user} setToast={setToast} />
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
+                }
+              />
+              <Route
+                path="/moderation"
+                element={
+                  isStaff(user) ? (
+                    <Moderation setToast={setToast} />
+                  ) : (
+                    <Navigate to="/" replace />
+                  )
+                }
+              />
+              <Route path="*" element={<h1>Página no encontrada</h1>} />
+            </Routes>
+          )}
         </div>
 
         <div className="status-bar">
           <p className="status-bar-field">
-            {user ? `Conectado como ${user.username}` : "No has iniciado sesión"}
+            {user
+              ? `Conectado como ${user.username}`
+              : "No has iniciado sesión"}
           </p>
           <p className="status-bar-field">Marketplace Beauchef</p>
         </div>

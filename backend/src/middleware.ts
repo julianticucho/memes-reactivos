@@ -1,105 +1,108 @@
-import type { NextFunction, Request, Response } from "express"
-import jwt from "jsonwebtoken"
-import User, { type Role } from "./models/user.js"
+import type { NextFunction, Request, Response } from "express";
+import jwt from "jsonwebtoken";
+import User, { type Role } from "./models/user.js";
 
-const JWT_SECRET = process.env.JWT_SECRET || "my_secret"
+const JWT_SECRET = process.env.JWT_SECRET || "my_secret";
 
 export const withUser = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ): Promise<void> => {
-    try {
-        const token = req.cookies?.token
-        if (!token) {
-            res.status(401).json({ error: "token faltante" })
-            return
-        }
-        const decodedToken = jwt.verify(token, JWT_SECRET)
-        const csrfToken = req.headers["x-csrf-token"]
-        if (
-            typeof decodedToken === "object"
-            && decodedToken.id
-            && decodedToken.csrf === csrfToken
-        ) {
-            req.userId = decodedToken.id
-            next()
-        } else {
-            res.status(401).json({ error: "token inválido" })
-        }
-    } catch (error) {
-        if (error instanceof Error && error.name === "TokenExpiredError") {
-            next(error)
-            return
-        }
-        res.status(401).json({ error: "token inválido" })
+  try {
+    const token = req.cookies?.token;
+    if (!token) {
+      res.status(401).json({ error: "token faltante" });
+      return;
     }
-}
+    const decodedToken = jwt.verify(token, JWT_SECRET);
+    const csrfToken = req.headers["x-csrf-token"];
+    if (
+      typeof decodedToken === "object" &&
+      decodedToken.id &&
+      decodedToken.csrf === csrfToken
+    ) {
+      req.userId = decodedToken.id;
+      next();
+    } else {
+      res.status(401).json({ error: "token inválido" });
+    }
+  } catch (error) {
+    if (error instanceof Error && error.name === "TokenExpiredError") {
+      next(error);
+      return;
+    }
+    res.status(401).json({ error: "token inválido" });
+  }
+};
 
 // solo para lecturas: no exige CSRF y un token inválido o vencido cuenta como anónimo
 export const withOptionalUser = (
-    req: Request,
-    _res: Response,
-    next: NextFunction,
+  req: Request,
+  _res: Response,
+  next: NextFunction,
 ): void => {
-    const token = req.cookies?.token
-    if (token) {
-        try {
-            const decodedToken = jwt.verify(token, JWT_SECRET)
-            if (typeof decodedToken === "object" && decodedToken.id) {
-                req.userId = decodedToken.id
-            }
-        } catch {
-            // anónimo
-        }
+  const token = req.cookies?.token;
+  if (token) {
+    try {
+      const decodedToken = jwt.verify(token, JWT_SECRET);
+      if (typeof decodedToken === "object" && decodedToken.id) {
+        req.userId = decodedToken.id;
+      }
+    } catch {
+      // anónimo
     }
-    next()
-}
+  }
+  next();
+};
 
-export const requireRole =(...roles: Role[]) =>
-    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        try {
-            const user = await User.findById(req.userId).select("role")
-            if (!user) {
-                res.status(401).json({ error: "usuario no encontrado" })
-                return
-            }
-            if (!roles.includes(user.role)) {
-                res.status(403).json({ error: "no autorizado" })
-                return
-            }
-            next()
-        } catch (error) {
-            next(error)
-        }
+export const requireRole =
+  (...roles: Role[]) =>
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const user = await User.findById(req.userId).select("role");
+      if (!user) {
+        res.status(401).json({ error: "usuario no encontrado" });
+        return;
+      }
+      if (!roles.includes(user.role)) {
+        res.status(403).json({ error: "no autorizado" });
+        return;
+      }
+      next();
+    } catch (error) {
+      next(error);
     }
+  };
 
 const errorHandler = (
-    error: { name: string, message: string },
-    _req: Request,
-    res: Response,
-    next: NextFunction,
+  error: { name: string; message: string },
+  _req: Request,
+  res: Response,
+  next: NextFunction,
 ) => {
-    console.error(error.message)
-    if (error.name === "CastError") {
-        res.status(400).send({ error: "id inválido" })
-    } else if (error.name === "ValidationError") {
-        res.status(400).send({ error: error.message })
-    } else if (
-        error.name === "MongoServerError"
-        && error.message.includes("E11000 duplicate key error")
-    ) {
-        if (error.message.includes("reviewedUser")) {
-            res.status(400).json({ error: "ya dejaste una reseña para este usuario" })
-        } else {
-            const field = error.message.includes("email") ? "email" : "username"
-            res.status(400).json({ error: `el ${field} ya existe` })
-        }
-    } else if (error.name === "TokenExpiredError") {
-        res.status(401).json({ error: "token expirado" })
+  console.error(error.message);
+  if (error.name === "CastError") {
+    res.status(400).send({ error: "id inválido" });
+  } else if (error.name === "ValidationError") {
+    res.status(400).send({ error: error.message });
+  } else if (
+    error.name === "MongoServerError" &&
+    error.message.includes("E11000 duplicate key error")
+  ) {
+    if (error.message.includes("reviewedUser")) {
+      res
+        .status(400)
+        .json({ error: "ya dejaste una reseña para este usuario" });
     } else {
-        next(error)
+      const field = error.message.includes("email") ? "email" : "username";
+      res.status(400).json({ error: `el ${field} ya existe` });
     }
-}
+  } else if (error.name === "TokenExpiredError") {
+    res.status(401).json({ error: "token expirado" });
+  } else {
+    next(error);
+  }
+};
 
-export default { errorHandler }
+export default { errorHandler };

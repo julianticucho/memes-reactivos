@@ -3,7 +3,9 @@ import axiosSecure from "../utils/axiosSecure";
 import type { Product } from "../types/products";
 
 const getAll = async () => {
-  return axios.get<Product[]>("/api/products").then((response) => response.data);
+  return axios
+    .get<Product[]>("/api/products")
+    .then((response) => response.data);
 };
 
 const getMine = async () => {
