@@ -11,8 +11,7 @@ backend/   Express 5 + Mongoose + MongoDB (ESM, tsx)
 frontend/  React 19 + Vite 7 + xp.css (Windows XP theme)
 ```
 
-- UI = XP.css + inline styles. `@emotion/*` is in frontend deps but **unused** in
-  `src/` — don't assume a component library exists.
+- UI = XP.css + inline styles.
 - No README, no CI, no test framework in either package.
 
 ## Dev Commands
