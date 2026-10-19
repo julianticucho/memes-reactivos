@@ -6,7 +6,7 @@ import type { ReviewsResponse } from "../types/reviews";
 import productsService from "../services/products";
 import usersService from "../services/users";
 import reviewsService from "../services/reviews";
-import ProductsFinder from "../components/ProductsFinder";
+import ProductsExplorer from "../components/ProductsExplorer";
 import Tabs from "../components/Tabs";
 import ReviewSection from "../components/ReviewSection";
 
@@ -80,7 +80,7 @@ const Profile = ({ user, setToast }: ProfileProps) => {
     />
   );
 
-  const productsTab = <ProductsFinder products={products} />;
+  const productsTab = <ProductsExplorer products={products} />;
 
   return (
     <div className="profile-page">

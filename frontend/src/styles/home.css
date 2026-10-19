@@ -4,7 +4,7 @@
    que si los controles se parten en varias lineas no quede separacion
    vertical entre ellas; el padding reaproxima los elementos al borde
    del contenido. */
-.finder-bar {
+.explorer-bar {
   display: flex;
   align-items: center;
   column-gap: 6px;
@@ -18,11 +18,11 @@
 
 /* Si la barra es lo primero del window-body (Home), se pega al borde
    superior cancelando tambien su padding-top. */
-.window-body > .finder-bar:first-child {
+.window-body > .explorer-bar:first-child {
   margin-top: -10px;
 }
 
-.finder-bar input[type="text"] {
+.explorer-bar input[type="text"] {
   flex: 1;
   min-width: 140px;
 }

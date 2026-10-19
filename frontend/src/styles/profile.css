@@ -1,6 +1,6 @@
 /* El perfil no es una ventana anidada: una tira beige llena el
    window-body de la app (los margenes negativos cancelan su padding,
-   igual que la barra .finder-bar). */
+   igual que la barra .explorer-bar). */
 .profile-page {
   background: var(--panel-beige);
   margin: -10px -10px 10px;

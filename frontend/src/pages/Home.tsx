@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { Product } from "../types/products";
 import productsService from "../services/products";
 import { Outlet } from "react-router-dom";
-import ProductsFinder from "../components/ProductsFinder";
+import ProductsExplorer from "../components/ProductsExplorer";
 
 const Home = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -20,7 +20,7 @@ const Home = () => {
 
   return (
     <>
-      <ProductsFinder products={products} />
+      <ProductsExplorer products={products} />
       <Outlet />
     </>
   );

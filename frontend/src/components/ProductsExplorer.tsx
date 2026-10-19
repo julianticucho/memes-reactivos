@@ -43,11 +43,11 @@ function getPageItems(totalPages: number, current: number): PageItem[] {
   return items;
 }
 
-interface ProductsFinderProps {
+interface ProductsExplorerProps {
   products: Product[];
 }
 
-const ProductsFinder = ({ products }: ProductsFinderProps) => {
+const ProductsExplorer = ({ products }: ProductsExplorerProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todas");
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
@@ -74,7 +74,7 @@ const ProductsFinder = ({ products }: ProductsFinderProps) => {
 
   return (
     <>
-      <div className="finder-bar">
+      <div className="explorer-bar">
         <label htmlFor="search">Búsqueda:</label>
         <input
           id="search"
@@ -162,4 +162,4 @@ const ProductsFinder = ({ products }: ProductsFinderProps) => {
   );
 };
 
-export default ProductsFinder;
+export default ProductsExplorer;
