@@ -1,0 +1,41 @@
+/* El perfil no es una ventana anidada: una tira beige llena el
+   window-body de la app (los margenes negativos cancelan su padding,
+   igual que la barra .finder-bar). */
+.profile-page {
+  background: var(--panel-beige);
+  margin: -10px -10px 10px;
+  padding: 10px;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.profile-header img {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  background: #fff;
+  border: 1px solid var(--border);
+}
+
+.profile-header h1 {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.profile-header p {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 2px 0 0;
+}
+
+/* Info del perfil: tree-view sin altura fija, encajada entre la
+   cabecera (avatar + nombre) y las pestañas. */
+.profile-info {
+  margin: 0 0 10px;
+}

@@ -1,0 +1,110 @@
+/* ---- Comentarios y reseñas ---- */
+/* ul.tree-view ya trae el marco hundido blanco; al fijarle alto
+   aparece la barra, que XP.css estiliza con sus ::-webkit-scrollbar. */
+.comment-list,
+.review-list {
+  height: 180px;
+  overflow-y: auto;
+  margin: 0 0 10px;
+}
+
+.comment-meta,
+.review-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.comment-author {
+  font-weight: 700;
+}
+
+.comment-date {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.comment-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 4px;
+}
+
+.comment-actions button {
+  min-width: 0;
+  padding: 1px 6px;
+  font-size: 10px;
+}
+
+.comment-text {
+  margin: 2px 0 0;
+  white-space: pre-wrap;
+}
+
+.comment-form,
+.comment-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.comment-edit textarea,
+.comment-form textarea {
+  resize: vertical;
+  font-family: inherit;
+  font-size: 11px;
+}
+
+/* Error de campo de formulario (texto en rojo, sin toasts) */
+.field-error {
+  color: var(--red-error);
+  margin: 0;
+}
+
+/* ---- Reputación ---- */
+.reputation-summary {
+  margin: 0 0 8px;
+}
+
+/* Insignia +1/-1 junto a cada reseña */
+.vote-badge {
+  display: inline-block;
+  min-width: 22px;
+  text-align: center;
+  padding: 1px 4px;
+  font-size: 10px;
+  font-weight: 700;
+  border: 1px solid var(--border);
+  background: #fff;
+}
+
+.vote-badge.vote-up {
+  color: var(--green-ok);
+}
+
+.vote-badge.vote-down {
+  color: var(--red-error);
+}
+
+/* La reseña propia se destaca con el beige de los paneles XP */
+.review-mine {
+  background: var(--yellow-note);
+}
+
+.review-votes {
+  display: flex;
+  gap: 16px;
+}
+
+.review-votes .field-row {
+  margin: 0;
+}
+
+.my-review {
+  margin-top: 10px;
+}
+
+.my-review .dialog-buttons {
+  margin-top: 6px;
+}

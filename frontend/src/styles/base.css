@@ -1,0 +1,15 @@
+/* XP.css estiliza los componentes pero no define fondo de pagina:
+   el "escritorio" corre por nuestra cuenta. */
+body {
+  /* El color queda de respaldo mientras carga la imagen o si falla.
+     'fixed' hace que el fondo no se mueva al hacer scroll, como un
+     escritorio de verdad. */
+  background-color: var(--desktop-blue);
+  background-image: url("/bliss.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
+  padding: 24px 16px;
+}

@@ -1,0 +1,85 @@
+/* ---- Ventana principal de la app ---- */
+/* Ancho de la ventana para que quepan 6 tarjetas por linea:
+   6 x 156px + 5 x 12px (gaps) = 996px de contenido
+   + 6px (padding de .window) + 6px (margin del .window-body)
+   + 20px (padding del .window-body) = 1028px -> 1030px. */
+.app-window {
+  max-width: 1030px;
+  margin: 0 auto;
+}
+
+/* Cuerpo blanco compartido por todas las ventanas de la app (app, detalle,
+   toast, auth, confirmacion): el margen de 3px a los lados y abajo deja ver
+   el marco azul inset de XP.css. */
+.app-window .window-body,
+.detail-window .window-body,
+.toast-window .window-body,
+.auth-window .window-body,
+.confirm-window .window-body {
+  margin: 0 3px 3px;
+  padding: 10px;
+  font-size: 11px;
+  background: #fff;
+  border: 1px solid var(--border);
+}
+
+/* ---- Barra de menu (System / Network / Help de XP).
+       XP.css no trae una, asi que la definimos aca. ---- */
+.menu-bar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 4px;
+  margin: 0 3px;
+  background: #fff;
+  border-bottom: 1px solid var(--menu-border);
+  font-size: 11px;
+}
+
+.menu-bar a,
+.menu-bar button {
+  padding: 3px 8px;
+  color: #000;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  font-size: 11px;
+  text-decoration: none;
+  cursor: pointer;
+  min-width: 0;
+  min-height: 0;
+}
+
+.menu-bar a:hover,
+.menu-bar button:hover {
+  background: var(--menu-hover);
+  color: #fff;
+}
+
+.menu-bar .menu-spacer {
+  flex: 1;
+}
+
+.menu-bar .menu-user {
+  font-weight: 700;
+}
+
+/* ---- Encabezado de seccion: la franja azul de las ventanas XP ----
+   XP.css reparte tamanios de titulo gigantes de su propia demo
+   (h1: 5rem, h2: 2.5rem); aqui no aplica ningun h2, y todo h1 hijo directo
+   del window-body (NewProduct, Moderacion, 404) se pinta como franja. */
+.window-body > h1 {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(180deg, var(--strip-top), var(--strip-bottom));
+  padding: 4px 8px;
+  margin: -10px -10px 10px;
+}
+
+/* Etiquetas en negrita ("Vendedor:", "Contacto:", ...) de los bloques de
+   informacion (publicacion, perfil, reseñas, moderacion). */
+.info-label {
+  font-weight: 700;
+}

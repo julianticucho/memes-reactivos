@@ -1,0 +1,66 @@
+/* Tokens del tema, en dos niveles.
+   XP.css NO declara variables (ni :root ni var()): el primer bloque es un
+   espejo literal de su paleta con el selector de origen de cada valor, y el
+   segundo bloque los referencia con var() bajo nuestros nombres semanticos,
+   declarando valor propio solo donde XP.css no tiene equivalente. */
+:root {
+  /* ---- 1. Colores tomados directamente de XP.css (--xp-*) ---- */
+
+  /* Beige de superficie: .window, button, .surface, legend */
+  --xp-beige: #ece9d8;
+  /* Gris de borde: [role=tabpanel], pestaña activa */
+  --xp-border: #919b9c;
+  /* Azul de texto: legend */
+  --xp-link: #0046d5;
+  /* Azul de seleccion: input::selection, select:focus, tree-view a:focus */
+  --xp-selection: #2267cb;
+  /* Gradiente de .title-bar: paradas 0% y 8% */
+  --xp-titlebar-top: #0997ff;
+  --xp-titlebar-mid: #0053ee;
+  /* Grises: canal de progress / track de range / borde de checkbox */
+  --xp-gray: #686868;
+  --xp-disabled: #a9a9a9;
+  --xp-separator: #dcdcd7;
+  /* Plasticos claros: button / check activo / track de range */
+  --xp-plastic-light: #d8d0c4;
+  --xp-plastic-dark: #b0b0a7;
+  --xp-plastic-border: #9d9c99;
+  /* Azul oscuro: border de button */
+  --xp-navy: #003c74;
+  /* Azul claro: button:focus */
+  --xp-blue-pale: #98b8ea;
+  /* Marco inset de .window (6 insets azules) */
+  --xp-window-shadow:
+    inset -1px -1px #00138c, inset 1px 1px #0831d9, inset -2px -2px #001ea0,
+    inset 2px 2px #166aee, inset -3px -3px #003bda, inset 3px 3px #0855dd;
+
+  /* ---- 2. Nuestros tokens semanticos ---- */
+
+  /* Referencias a la paleta XP.css */
+  --panel-beige: var(--xp-beige);
+  --border: var(--xp-border);
+  --link: var(--xp-link);
+  --accent: var(--xp-selection);
+  --menu-hover: var(--xp-selection);
+  --strip-top: var(--xp-titlebar-top);
+  --strip-bottom: var(--xp-titlebar-mid);
+  --text-muted: var(--xp-gray);
+  --text-disabled: var(--xp-disabled);
+  --menu-border: var(--xp-separator);
+  --bezel-light: var(--xp-plastic-light);
+  --bezel-dark: var(--xp-plastic-dark);
+  --bezel-border: var(--xp-plastic-border);
+  --screen: var(--xp-navy);
+  --screen-ring: var(--xp-gray);
+  --screen-text: var(--xp-blue-pale);
+  /* El marco inset lo hereda XP.css; solo anadimos nuestra sombra proyectada */
+  --shadow-window: var(--xp-window-shadow), 4px 4px 10px rgb(0 0 0 / 45%);
+
+  /* Colores propios: XP.css no tiene un rol equivalente */
+  --desktop-blue: #3a6ea5;
+  --red-error: #a00000;
+  --green-ok: #006600;
+  --yellow-note: #ffffe1;
+  --orange-pending: #b45f00;
+  --overlay: rgb(0 0 0 / 35%);
+}

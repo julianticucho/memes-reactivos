@@ -1,0 +1,66 @@
+/* Fila de botones abajo a la derecha, como OK / Cancelar / Aplicar */
+.dialog-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.dialog-buttons button {
+  min-width: 75px;
+  padding: 3px 10px;
+}
+
+.dialog-buttons button:disabled {
+  color: var(--text-disabled);
+  cursor: default;
+}
+
+/* ---- Toast ---- */
+.toast-window {
+  position: fixed;
+  top: 60px;
+  right: 16px;
+  width: 280px;
+  z-index: 1000;
+  margin: 0;
+  box-shadow: var(--shadow-window);
+  animation: toast-in 0.2s ease-out;
+}
+
+@keyframes toast-in {
+  from {
+    transform: translateX(110%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* ---- Modal de confirmación ---- */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+}
+
+.confirm-window {
+  width: 320px;
+  margin: 0;
+  box-shadow: var(--shadow-window);
+}
+
+.confirm-window .window-body p {
+  margin: 0 0 12px;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}

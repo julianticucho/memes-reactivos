@@ -1,0 +1,23 @@
+/* ---- Ventanas de autenticacion ---- */
+.auth-window {
+  width: 360px;
+  margin: 40px auto;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.auth-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.auth-actions button {
+  width: fit-content;
+}
