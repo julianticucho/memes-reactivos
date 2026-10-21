@@ -15,7 +15,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
       onClick={() => navigate(`${location.pathname}?product=${product._id}`)}
     >
       <div className="product-card-icon">
-        <img src={product.image?.[0] || "/no-image.avif"} alt={product.name} />
+        <img src={product.image?.[0] || "/no-image.png"} alt={product.name} />
       </div>
       <div className="product-card-label">
         <p className="product-name">{product.name}</p>
