@@ -66,16 +66,25 @@
   font-weight: 700;
 }
 
-/* ---- Encabezado de seccion: la franja azul de las ventanas XP ----
+/* ---- Encabezado de seccion ----
    XP.css reparte tamanios de titulo gigantes de su propia demo
    (h1: 5rem, h2: 2.5rem); aqui no aplica ningun h2, y todo h1 hijo directo
-   del window-body (NewProduct, Moderacion, 404) se pinta como franja. */
+   del window-body (Moderacion, 404) se pinta como franja beige del mismo
+   alto que la .explorer-bar (padding 4px, sin negrita), con la fuente
+   Pixelated de XP. */
 .window-body > h1 {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  /* Igual que .explorer-bar: inputs XP ~22px + padding 4px de cada lado
+     = ~30px; el texto solo no llegaba a ese alto. */
+  min-height: 30px;
+  font-family: "Pixelated MS Sans Serif", Arial;
   font-size: 11px;
-  font-weight: 700;
-  color: #fff;
-  background: linear-gradient(180deg, var(--strip-top), var(--strip-bottom));
-  padding: 4px 8px;
+  font-weight: 400;
+  color: #222;
+  background: var(--panel-beige);
+  padding: 4px 10px;
   margin: -10px -10px 10px;
 }
 
