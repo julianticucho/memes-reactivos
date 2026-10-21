@@ -1,4 +1,10 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useParams,
+} from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import Navbar from "./components/Navbar";
@@ -12,8 +18,12 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NewProduct from "./pages/NewProduct";
 import EditProduct from "./pages/EditProduct";
-import ProductDetail from "./pages/ProductDetail";
 import Moderation from "./pages/Moderation";
+
+function ProductRedirect() {
+  const { id } = useParams<{ id: string }>();
+  return <Navigate to={`/?product=${id}`} replace />;
+}
 
 function App() {
   const [toast, setToast] = useState<{
@@ -74,12 +84,11 @@ function App() {
             <p>Cargando...</p>
           ) : (
             <Routes>
-              <Route path="/" element={<Home />}>
-                <Route
-                  path="product/:id"
-                  element={<ProductDetail user={user} setToast={setToast} />}
-                />
-              </Route>
+              <Route
+                path="/"
+                element={<Home user={user} setToast={setToast} />}
+              />
+              <Route path="/product/:id" element={<ProductRedirect />} />
               <Route
                 path="/profile"
                 element={
@@ -138,7 +147,7 @@ function App() {
                 path="/moderation"
                 element={
                   isStaff(user) ? (
-                    <Moderation setToast={setToast} />
+                    <Moderation user={user} setToast={setToast} />
                   ) : (
                     <Navigate to="/" replace />
                   )

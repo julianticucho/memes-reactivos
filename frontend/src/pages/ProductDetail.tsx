@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { createPortal } from "react-dom";
+import { Link, useNavigate } from "react-router-dom";
 import type { Product } from "../types/products";
 import type { User } from "../types/users";
 import productsService from "../services/products";
@@ -16,13 +17,19 @@ const formatDate = (iso: string) =>
 interface ProductDetailProps {
   user: User | null;
   setToast: (toast: { message: string; severity: "success" | "error" }) => void;
+  productId: string;
+  onClose: () => void;
+  onDeleted?: (id: string) => void;
 }
 
-const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
-  const { id } = useParams<{ id: string }>();
+const ProductDetail = ({
+  user,
+  setToast,
+  productId,
+  onClose,
+  onDeleted,
+}: ProductDetailProps) => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const backTo = (location.state as { from?: string } | null)?.from ?? "/";
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [confirming, setConfirming] = useState(false);
@@ -31,18 +38,25 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
   const [commentCount, setCommentCount] = useState(0);
 
   useEffect(() => {
-    if (!id) return;
+    let cancelled = false;
+    setLoading(true);
     productsService
-      .getById(id)
+      .getById(productId)
       .then((data) => {
+        if (cancelled) return;
         setProduct(data);
         setImgIdx(0);
         setActiveTab("publicacion");
         setCommentCount(0);
       })
       .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [id]);
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [productId]);
 
   const handleDelete = () => {
     if (!product) return;
@@ -51,7 +65,8 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
       .remove(product._id)
       .then(() => {
         setToast({ message: "Producto eliminado", severity: "success" });
-        navigate(backTo);
+        onDeleted?.(product._id);
+        onClose();
       })
       .catch((err) => {
         const msg =
@@ -60,10 +75,10 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
       });
   };
 
-  const handleClose = () => navigate(backTo);
+  const handleClose = () => onClose();
 
   if (loading || !product) {
-    return (
+    return createPortal(
       <div className="detail-overlay">
         <div className="window detail-window" role="dialog" aria-modal="true">
           <div className="title-bar">
@@ -76,7 +91,8 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
             <p>{loading ? "Cargando..." : "Producto no encontrado"}</p>
           </div>
         </div>
-      </div>
+      </div>,
+      document.body,
     );
   }
 
@@ -84,7 +100,7 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
   const images = product.image ?? [];
   const total = images.length;
 
-  return (
+  return createPortal(
     <>
       <div className="detail-overlay">
         <div
@@ -270,7 +286,8 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
           </div>
         </div>
       )}
-    </>
+    </>,
+    document.body,
   );
 };
 

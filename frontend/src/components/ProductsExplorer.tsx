@@ -1,6 +1,9 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import type { Product } from "../types/products";
+import type { User } from "../types/users";
 import ProductCard from "./ProductCard";
+import ProductDetail from "../pages/ProductDetail";
 
 const PER_PAGE = 18;
 
@@ -45,13 +48,29 @@ function getPageItems(totalPages: number, current: number): PageItem[] {
 
 interface ProductsExplorerProps {
   products: Product[];
+  user: User | null;
+  setToast: (toast: { message: string; severity: "success" | "error" }) => void;
+  onProductRemoved: (id: string) => void;
 }
 
-const ProductsExplorer = ({ products }: ProductsExplorerProps) => {
+const ProductsExplorer = ({
+  products,
+  user,
+  setToast,
+  onProductRemoved,
+}: ProductsExplorerProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todas");
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
   const [page, setPage] = useState(1);
+  const [params, setParams] = useSearchParams();
+  const openId = params.get("product");
+
+  const closeDetail = () => {
+    const next = new URLSearchParams(params);
+    next.delete("product");
+    setParams(next, { replace: true });
+  };
 
   const filtered = products.filter((p) => {
     const matchesName = p.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -155,6 +174,16 @@ const ProductsExplorer = ({ products }: ProductsExplorerProps) => {
             Siguiente ›
           </button>
         </nav>
+      )}
+
+      {openId && (
+        <ProductDetail
+          productId={openId}
+          user={user}
+          setToast={setToast}
+          onClose={closeDetail}
+          onDeleted={onProductRemoved}
+        />
       )}
     </>
   );

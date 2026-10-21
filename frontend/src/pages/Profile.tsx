@@ -81,7 +81,16 @@ const Profile = ({ user, setToast }: ProfileProps) => {
     />
   );
 
-  const productsTab = <ProductsExplorer products={products} />;
+  const productsTab = (
+    <ProductsExplorer
+      products={products}
+      user={user}
+      setToast={setToast}
+      onProductRemoved={(id) =>
+        setProducts((prev) => prev.filter((p) => p._id !== id))
+      }
+    />
+  );
 
   return (
     <div className="profile-page">

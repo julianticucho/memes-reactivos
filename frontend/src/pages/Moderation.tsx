@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import type { Product } from "../types/products";
+import type { User } from "../types/users";
 import moderationService from "../services/moderation";
 import productsService from "../services/products";
+import ProductDetail from "./ProductDetail";
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleString("es-CL", {
@@ -11,14 +13,23 @@ const formatDate = (iso: string) =>
   });
 
 interface ModerationProps {
+  user: User | null;
   setToast: (toast: { message: string; severity: "success" | "error" }) => void;
 }
 
-const Moderation = ({ setToast }: ModerationProps) => {
+const Moderation = ({ user, setToast }: ModerationProps) => {
   const navigate = useNavigate();
+  const [params, setParams] = useSearchParams();
+  const openId = params.get("product");
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<Product | null>(null);
+
+  const closeDetail = () => {
+    const next = new URLSearchParams(params);
+    next.delete("product");
+    setParams(next, { replace: true });
+  };
 
   useEffect(() => {
     moderationService
@@ -118,11 +129,7 @@ const Moderation = ({ setToast }: ModerationProps) => {
             <div className="dialog-buttons">
               <button
                 type="button"
-                onClick={() =>
-                  navigate(`/product/${product._id}`, {
-                    state: { from: "/moderation" },
-                  })
-                }
+                onClick={() => navigate(`/moderation?product=${product._id}`)}
               >
                 Ver detalle
               </button>
@@ -166,6 +173,16 @@ const Moderation = ({ setToast }: ModerationProps) => {
             </div>
           </div>
         </div>
+      )}
+
+      {openId && (
+        <ProductDetail
+          productId={openId}
+          user={user}
+          setToast={setToast}
+          onClose={closeDetail}
+          onDeleted={removeFromList}
+        />
       )}
     </>
   );
