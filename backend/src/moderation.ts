@@ -18,6 +18,7 @@ const DRUGS = [
   "ketamina",
   "fentanilo",
   "opio",
+  "pasta",
 ];
 
 const WEAPONS = [
