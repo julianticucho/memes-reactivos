@@ -28,24 +28,26 @@
 }
 
 /* ---- Grilla de productos ---- */
-/* Columnas del ancho exacto de la tarjeta (156px), empaquetadas a la
-   izquierda como los iconos del explorador. auto-fill deja maximo 6
-   por linea con el ancho de .app-window. */
+/* Columnas fluidas: minmax(140px, 1fr) llena el ancho disponible
+   empaquetando hasta 6 por linea en .app-window (~157px) y 6 tambien
+   dentro del perfil, que tiene menos ancho por el padding del tabpanel
+   de XP.css (~153px). Con tarjetas fijas de 156px el perfil solo
+   alcanzaba para 5 y quedaba un hueco al final de cada fila. */
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 156px);
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 12px;
 }
 
 /* La tarjeta ya no tiene fondo ni borde: es solo el icono con su
-   etiqueta debajo. Sin min-width: 0, un nombre largo
-   (white-space: nowrap) la agrandaria mas alla de su columna y
-   desbordaria a la derecha. */
+   etiqueta debajo. width: 100% la estira al ancho de su columna
+   fluida; sin min-width: 0, un nombre largo (white-space: nowrap)
+   la agrandaria mas alla de su columna y desbordaria a la derecha. */
 .product-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 156px;
+  width: 100%;
   box-sizing: border-box;
   min-width: 0;
   cursor: pointer;
