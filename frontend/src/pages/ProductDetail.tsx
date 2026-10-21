@@ -83,6 +83,7 @@ const ProductDetail = ({
       <ModalWindow
         title="Detalle de producto"
         className="detail-window"
+        size={460}
         onClose={handleClose}
       >
         <p>{loading ? "Cargando..." : "Producto no encontrado"}</p>
@@ -100,6 +101,7 @@ const ProductDetail = ({
       <ModalWindow
         title={product.name}
         className="detail-window"
+        size={460}
         onClose={handleClose}
       >
         <Tabs
