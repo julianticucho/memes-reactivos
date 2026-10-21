@@ -1,0 +1,109 @@
+/* Selector de archivos estilo "Display Properties" de XP: monitor con
+   el fondo seleccionado arriba, y debajo la lista de archivos con su
+   columna de botones. El cromo del monitor (.monitor, .monitor-screen,
+   .monitor-stand) se reutiliza tal cual del visor de ProductDetail. */
+.file-uploader {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+
+/* Lista de archivos a la izquierda, botones Examinar/Eliminar a su
+   derecha, como el cuadro de fondos del panel de escritorio. */
+.uploader-body {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
+/* Caja hundida (sunken) de la lista: fondo blanco con borde inset,
+   como los listbox de XP. Altura fija de exactamente 4 filas
+   (4 x 18px de fila + 4px de padding del ul + 2px del borde = 78px):
+   siempre igual y con scrollbar cuando hay mas archivos. */
+.file-list {
+  flex: 1;
+  min-width: 0;
+  height: 78px;
+  overflow-y: auto;
+  box-sizing: border-box;
+  background: #fff;
+  border: 1px solid var(--border);
+  box-shadow: inset 1px 1px 0 rgb(0 0 0 / 15%);
+  font-size: 11px;
+}
+
+.file-list ul {
+  margin: 0;
+  padding: 2px;
+  list-style: none;
+}
+
+/* Estado vacio ("Sin archivos"): el parrafo llena la caja fija y
+   centra el texto en el medio de ella (deja de valer el margin: 16px 0
+   del .empty-state compartido, que lo pegaba arriba). */
+.file-list .empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  margin: 0;
+}
+
+/* Fila de la vista "detalles": slot del icono (16px, por tipo MIME)
+   y a su derecha el nombre, que se corta con puntos suspensivos. */
+.file-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 4px;
+  min-width: 0;
+  cursor: pointer;
+}
+
+/* Seleccion azul del explorador de XP. */
+.file-row[aria-selected="true"] {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* Slot del icono XP por familia (file-icon--image, --document, ...).
+   Por ahora TODAS las familias pintan el mismo grafico
+   (assets/xp/image.png, 100x100 escalado a 16px). El slot va sin
+   fondo opaco ni borde: el PNG es transparente, asi que el color lo
+   pone la fila de abajo (blanca, o azul cuando esta seleccionada);
+   con el fondo beige se marcaba el cuadrado detras del icono. El
+   icono real de cada familia se carga despues con una regla por
+   file-icon--<familia>. */
+.file-list .file-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  background: url("/assets/xp/image.png") center / 16px 16px no-repeat;
+}
+
+.file-list .file-name {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Columna de botones a la derecha de la lista. */
+.uploader-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  width: 92px;
+}
+
+.uploader-actions button:disabled {
+  color: var(--text-disabled);
+  cursor: default;
+}
+
+/* Error de lectura de archivos (debajo del cuerpo, sobre el borde). */
+.uploader-error {
+  color: var(--red-error);
+  margin: 6px 0 0;
+}

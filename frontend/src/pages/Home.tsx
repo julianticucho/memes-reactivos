@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Outlet } from "react-router-dom";
 import type { Product } from "../types/products";
 import type { User } from "../types/users";
 import productsService from "../services/products";
@@ -24,14 +25,17 @@ const Home = ({ user, setToast }: HomeProps) => {
   if (loading) return <p>Cargando...</p>;
 
   return (
-    <ProductsExplorer
-      products={products}
-      user={user}
-      setToast={setToast}
-      onProductRemoved={(id) =>
-        setProducts((prev) => prev.filter((p) => p._id !== id))
-      }
-    />
+    <>
+      <ProductsExplorer
+        products={products}
+        user={user}
+        setToast={setToast}
+        onProductRemoved={(id) =>
+          setProducts((prev) => prev.filter((p) => p._id !== id))
+        }
+      />
+      <Outlet />
+    </>
   );
 };
 

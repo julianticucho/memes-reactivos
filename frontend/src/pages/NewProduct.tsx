@@ -1,7 +1,11 @@
-import React, { useState, useRef } from "react";
+import { useState } from "react";
+import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import productsService from "../services/products";
 import type { Product } from "../types/products";
+import FileUploader from "../components/FileUploader";
+import type { UploaderFile } from "../components/FileUploader";
+import ModalWindow from "../components/ModalWindow";
 
 const CATEGORIES = [
   "Electrónica",
@@ -11,6 +15,34 @@ const CATEGORIES = [
   "Libros",
   "Otros",
 ];
+
+/* Las imagenes guardadas son data URLs (Product.image: string[]); el
+   uploader trabaja con UploaderFile, asi que al abrirlas les derivamos
+   tipo MIME y extension del propio data URL. */
+const mimeFromDataUrl = (url: string): string => {
+  if (!url.startsWith("data:")) return "";
+  const end = url.indexOf(";");
+  return end === -1 ? "" : url.slice(5, end);
+};
+
+const MIME_EXT: Record<string, string> = {
+  "image/png": ".png",
+  "image/jpeg": ".jpg",
+  "image/gif": ".gif",
+  "image/webp": ".webp",
+  "image/avif": ".avif",
+  "image/svg+xml": ".svg",
+};
+
+const toUploaderFiles = (urls: string[]): UploaderFile[] =>
+  urls.map((url, idx) => {
+    const type = mimeFromDataUrl(url);
+    return {
+      name: `image-${idx + 1}${MIME_EXT[type] ?? ""}`,
+      type,
+      url,
+    };
+  });
 
 interface NewProductProps {
   setToast: (toast: { message: string; severity: "success" | "error" }) => void;
@@ -24,49 +56,20 @@ const NewProduct = ({ setToast, product }: NewProductProps) => {
   const [price, setPrice] = useState(product ? String(product.price) : "");
   const [category, setCategory] = useState(product?.category ?? "");
 
-  // Images are base64 data URLs, we save that as a string.
-  const [images, setImages] = useState<string[]>(product?.image ?? []);
-  const [selectedIdx, setSelectedIdx] = useState(0);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  // Images are base64 data URLs, we save that as a string. The uploader
+  // works with UploaderFile, so they get converted on both edges.
+  const [images, setImages] = useState<UploaderFile[]>(
+    toUploaderFiles(product?.image ?? []),
+  );
 
-  const handleAddImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImages((prev) => {
-        const next = [...prev, reader.result as string];
-        setSelectedIdx(next.length - 1);
-        return next;
-      });
-    };
-    reader.readAsDataURL(file);
-
-    // Reset so the same file can be re-selected
-    e.target.value = "";
-  };
-
-  const handleRemoveImage = (idx: number) => {
-    setImages((prev) => {
-      const next = prev.filter((_, i) => i !== idx);
-      setSelectedIdx((current) => {
-        if (current >= next.length) return Math.max(0, next.length - 1);
-        if (current > idx) return current - 1;
-        return current;
-      });
-      return next;
-    });
-  };
-
-  const handleSubmit = (e: React.SubmitEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     const data = {
       name: name.trim(),
       description: description.trim(),
       price: Number(price),
       category,
-      image: images.length > 0 ? images : null,
+      image: images.length > 0 ? images.map((file) => file.url) : null,
     };
     const request = product
       ? productsService.update(product._id, data)
@@ -104,173 +107,73 @@ const NewProduct = ({ setToast, product }: NewProductProps) => {
       });
   };
 
-  const selectedImage = images[selectedIdx] ?? null;
-
-  let imagePreview = <span style={{ color: "#888" }}>Sin imagen</span>;
-  if (selectedImage) {
-    imagePreview = (
-      <img
-        src={selectedImage}
-        alt="Preview"
-        style={{ width: "100%", height: "100%", objectFit: "cover" }}
-      />
-    );
-  }
+  // Cerrar la ventana vuelve al catalogo, o a la publicacion si se estaba
+  // editando (mismo cierre que el botón Close de ProductDetail).
+  const handleClose = () => navigate(product ? `/product/${product._id}` : "/");
 
   return (
-    <>
-      <h1>{product ? "Editar producto" : "Publicar producto"}</h1>
-
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          maxWidth: 400,
-          display: "flex",
-          flexDirection: "column",
-          gap: 12,
-        }}
-      >
-        <input
-          placeholder="Nombre"
-          required
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <textarea
-          placeholder="Descripción"
-          required
-          rows={2}
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        <input
-          placeholder="Precio"
-          required
-          type="number"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-        />
-        <select
-          required
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
+    <ModalWindow
+      title={product ? "Editar producto" : "Publicar producto"}
+      className="detail-window"
+      size={460}
+      onClose={handleClose}
+    >
+      <div className="form-panel">
+        <form
+          onSubmit={handleSubmit}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 12,
+          }}
         >
-          <option value="">Categoría</option>
-          {CATEGORIES.map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
-          ))}
-        </select>
-
-        <div style={{ maxWidth: 400, marginBottom: 16 }}>
-          <div
-            style={{
-              width: "100%",
-              height: 300,
-              borderRadius: 0,
-              border: "1px solid #ccc",
-              overflow: "hidden",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "#f5f5f5",
-            }}
+          <input
+            placeholder="Nombre"
+            required
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <input
+            placeholder="Descripción"
+            required
+            type="text"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+          <input
+            placeholder="Precio"
+            required
+            type="number"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+          />
+          <select
+            required
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
           >
-            {imagePreview}
-          </div>
-
-          <div
-            style={{ display: "flex", gap: 8, marginTop: 8, overflowX: "auto" }}
-          >
-            {images.map((img, idx) => (
-              <div
-                key={idx}
-                style={{
-                  position: "relative",
-                  flexShrink: 0,
-                  cursor: "pointer",
-                  borderRadius: 4,
-                  border:
-                    idx === selectedIdx
-                      ? "2px solid #a11"
-                      : "2px solid transparent",
-                }}
-                onClick={() => setSelectedIdx(idx)}
-              >
-                <img
-                  src={img}
-                  alt={`Miniatura ${idx + 1}`}
-                  style={{
-                    width: 64,
-                    height: 64,
-                    objectFit: "cover",
-                    borderRadius: 2,
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleRemoveImage(idx);
-                  }}
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    right: 0,
-                    width: 18,
-                    height: 18,
-                    border: "none",
-                    backgroundColor: "#a11",
-                    color: "#fff",
-                    fontSize: 12,
-                    fontWeight: "bold",
-                    lineHeight: "18px",
-                    textAlign: "center",
-                    cursor: "pointer",
-                    padding: 0,
-                  }}
-                >
-                  ×
-                </button>
-              </div>
+            <option value="">Categoría</option>
+            {CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
             ))}
+          </select>
 
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              style={{
-                flexShrink: 0,
-                width: 64,
-                height: 64,
-                border: "2px dashed #999",
-                backgroundColor: "transparent",
-                fontSize: 24,
-                color: "#999",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              +
+          <FileUploader value={images} onChange={setImages} accept="image/*" />
+
+          <div className="dialog-buttons">
+            <button type="button" onClick={handleClose}>
+              Cancelar
             </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleAddImage}
-              style={{ display: "none" }}
-            />
+            <button type="submit">
+              {product ? "Guardar cambios" : "Publicar"}
+            </button>
           </div>
-        </div>
-
-        <button type="submit">
-          {product ? "Guardar cambios" : "Publicar"}
-        </button>
-      </form>
-    </>
+        </form>
+      </div>
+    </ModalWindow>
   );
 };
 

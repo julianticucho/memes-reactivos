@@ -1,14 +1,4 @@
-/* Dialogo de detalle estilo "Display Properties" */
-.detail-overlay {
-  position: fixed;
-  inset: 0;
-  background: var(--overlay);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 900;
-}
-
+/* Dialogo de detalle estilo "Display Properties" (ModalWindow) */
 .detail-window {
   max-width: 460px;
   margin: 0;
@@ -23,6 +13,19 @@
    archivo va despues en el @import de index.css). */
 .detail-window .window-body {
   background: var(--panel-beige);
+}
+
+/* Contenedor blanco del formulario de NewProduct: replica a ojo la
+   pagina de pestaña de XP.css ([role=tabpanel]: degradado blanco,
+   borde gris, doble sombra) sin meter pestañas. */
+.form-panel {
+  padding: 14px;
+  background: linear-gradient(180deg, #fcfcfe, #f4f3ee);
+  border: 1px solid var(--border);
+  box-shadow:
+    inset 1px 1px #fcfcfe,
+    inset -1px -1px #fcfcfe,
+    1px 2px 2px 0 rgb(208 206 191 / 75%);
 }
 
 /* Encabezado de la publicacion: nombre, precio y vendedor sobre

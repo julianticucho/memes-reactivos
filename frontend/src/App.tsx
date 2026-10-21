@@ -87,7 +87,28 @@ function App() {
               <Route
                 path="/"
                 element={<Home user={user} setToast={setToast} />}
-              />
+              >
+                <Route
+                  path="product/new"
+                  element={
+                    user ? (
+                      <NewProduct setToast={setToast} />
+                    ) : (
+                      <Navigate to="/login" replace />
+                    )
+                  }
+                />
+                <Route
+                  path="product/:id/edit"
+                  element={
+                    user ? (
+                      <EditProduct user={user} setToast={setToast} />
+                    ) : (
+                      <Navigate to="/login" replace />
+                    )
+                  }
+                />
+              </Route>
               <Route path="/product/:id" element={<ProductRedirect />} />
               <Route
                 path="/profile"
@@ -120,26 +141,6 @@ function App() {
                     <Navigate to="/" replace />
                   ) : (
                     <Register setToast={setToast} />
-                  )
-                }
-              />
-              <Route
-                path="/product/new"
-                element={
-                  user ? (
-                    <NewProduct setToast={setToast} />
-                  ) : (
-                    <Navigate to="/login" replace />
-                  )
-                }
-              />
-              <Route
-                path="/product/:id/edit"
-                element={
-                  user ? (
-                    <EditProduct user={user} setToast={setToast} />
-                  ) : (
-                    <Navigate to="/login" replace />
                   )
                 }
               />

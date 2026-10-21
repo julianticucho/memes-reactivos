@@ -1,9 +1,12 @@
 /* El perfil no es una ventana anidada: una tira beige llena el
-   window-body de la app (los margenes negativos cancelan su padding,
-   igual que la barra .explorer-bar). */
+   window-body de la app (los margenes negativos cancelan su padding por
+   los cuatro lados, igual que la barra .explorer-bar en los costados;
+   el padding de 10px de la tira es el que separa su contenido de los
+   bordes). Con el fondo negativo de abajo quedaba una franja blanca de
+   10px de padding + 10px de margen sobre la barra de estado. */
 .profile-page {
   background: var(--panel-beige);
-  margin: -10px -10px 10px;
+  margin: -10px;
   padding: 10px;
 }
 
@@ -35,7 +38,10 @@
 }
 
 /* Info del perfil: tree-view sin altura fija, encajada entre la
-   cabecera (avatar + nombre) y las pestañas. */
-.profile-info {
+   cabecera (avatar + nombre) y las pestañas.
+   El selector lleva la etiqueta (ul.) para empatar la especificidad de
+   ul.tree-view de XP.css: con la clase sola, su margin: 0 (elemento +
+   clase) pisa este margin-bottom y las pestañas quedan pegadas. */
+ul.profile-info {
   margin: 0 0 10px;
 }
