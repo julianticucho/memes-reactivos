@@ -4,6 +4,7 @@ import type { Product } from "../types/products";
 import type { User } from "../types/users";
 import productsService from "../services/products";
 import Tabs from "../components/Tabs";
+import ModalWindow from "../components/ModalWindow";
 import CommentSection from "../components/CommentSection";
 import { isStaff } from "../utils/roles";
 
@@ -64,19 +65,13 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
 
   if (loading || !product) {
     return (
-      <div className="detail-overlay">
-        <div className="window detail-window" role="dialog" aria-modal="true">
-          <div className="title-bar">
-            <div className="title-bar-text">Detalle de producto</div>
-            <div className="title-bar-controls">
-              <button type="button" aria-label="Close" onClick={handleClose} />
-            </div>
-          </div>
-          <div className="window-body">
-            <p>{loading ? "Cargando..." : "Producto no encontrado"}</p>
-          </div>
-        </div>
-      </div>
+      <ModalWindow
+        title="Detalle de producto"
+        className="detail-window"
+        onClose={handleClose}
+      >
+        <p>{loading ? "Cargando..." : "Producto no encontrado"}</p>
+      </ModalWindow>
     );
   }
 
@@ -86,189 +81,161 @@ const ProductDetail = ({ user, setToast }: ProductDetailProps) => {
 
   return (
     <>
-      <div className="detail-overlay">
-        <div
-          className="window detail-window"
-          role="dialog"
-          aria-modal="true"
-          aria-label={product.name}
-        >
-          <div className="title-bar">
-            <div className="title-bar-text">{product.name}</div>
-            <div className="title-bar-controls">
-              <button type="button" aria-label="Close" onClick={handleClose} />
-            </div>
-          </div>
-
-          <div className="window-body">
-            <Tabs
-              ariaLabel="Detalle del producto"
-              active={activeTab}
-              onChange={setActiveTab}
-              tabs={[
-                {
-                  key: "publicacion",
-                  label: "Publicación",
-                  content: (
-                    <>
-                      {product.status === "pending" && (
-                        <p>
-                          <strong>En revisión: </strong>
-                          esta publicación aún no es visible para el público.
-                        </p>
+      <ModalWindow
+        title={product.name}
+        className="detail-window"
+        onClose={handleClose}
+      >
+        <Tabs
+          ariaLabel="Detalle del producto"
+          active={activeTab}
+          onChange={setActiveTab}
+          tabs={[
+            {
+              key: "publicacion",
+              label: "Publicación",
+              content: (
+                <>
+                  {product.status === "pending" && (
+                    <p>
+                      <strong>En revisión: </strong>
+                      esta publicación aún no es visible para el público.
+                    </p>
+                  )}
+                  <div className="detail-header">
+                    <p className="detail-name">{product.name}</p>
+                    <p className="detail-price">${product.price}</p>
+                    <p className="detail-seller">
+                      <span className="info-label">Vendedor: </span>
+                      {product.user ? (
+                        <Link to={`/profile/${product.user}`}>
+                          {product.seller}
+                        </Link>
+                      ) : (
+                        product.seller
                       )}
-                      <div className="detail-header">
-                        <p>
-                          <span className="detail-name">{product.name} </span>
-                          <span className="detail-price">
-                            ${product.price}{" "}
-                          </span>
-                        </p>
-                        <p className="detail-seller">
-                          <span className="info-label">Vendedor: </span>
-                          {product.user ? (
-                            <Link to={`/profile/${product.user}`}>
-                              {product.seller}
-                            </Link>
-                          ) : (
-                            product.seller
-                          )}
-                        </p>
-                      </div>
+                    </p>
+                  </div>
 
-                      <div className="monitor">
-                        <div className="monitor-screen">
-                          {total > 0 ? (
-                            <img
-                              src={images[imgIdx]}
-                              alt={`${product.name} ${imgIdx + 1} de ${total}`}
-                            />
-                          ) : (
-                            <span className="no-image">Sin imagen</span>
-                          )}
-                        </div>
-                        <div className="monitor-stand" />
-                      </div>
-
-                      {total > 1 && (
-                        <div className="image-pager">
-                          <button
-                            type="button"
-                            aria-label="Imagen anterior"
-                            disabled={imgIdx === 0}
-                            onClick={() => setImgIdx((i) => i - 1)}
-                          >
-                            &lt;
-                          </button>
-                          <span>
-                            {imgIdx + 1}
-                            {" / "}
-                            {total}
-                          </span>
-                          <button
-                            type="button"
-                            aria-label="Imagen siguiente"
-                            disabled={imgIdx === total - 1}
-                            onClick={() => setImgIdx((i) => i + 1)}
-                          >
-                            &gt;
-                          </button>
-                        </div>
+                  <div className="monitor">
+                    <div className="monitor-screen">
+                      {total > 0 ? (
+                        <img
+                          src={images[imgIdx]}
+                          alt={`${product.name} ${imgIdx + 1} de ${total}`}
+                        />
+                      ) : (
+                        <span className="no-image">Sin imagen</span>
                       )}
+                    </div>
+                    <div className="monitor-stand" />
+                  </div>
 
-                      <fieldset>
-                        <legend>Mas informacion</legend>
-                        <p>
-                          <span className="info-label">Descripción: </span>
-                          {product.description}
-                        </p>
-                        <p>
-                          <span className="info-label">Categoría: </span>
-                          {product.category}
-                        </p>
-                        <p>
-                          <span className="info-label">Publicado: </span>
-                          {formatDate(product.createdAt)}
-                          {product.updatedAt !== product.createdAt && (
-                            <>
-                              {" · "}
-                              <span className="info-label">Actualizado: </span>
-                              {formatDate(product.updatedAt)}
-                            </>
-                          )}
-                        </p>
-                      </fieldset>
+                  {total > 1 && (
+                    <div className="image-pager">
+                      <button
+                        type="button"
+                        aria-label="Imagen anterior"
+                        disabled={imgIdx === 0}
+                        onClick={() => setImgIdx((i) => i - 1)}
+                      >
+                        &lt;
+                      </button>
+                      <span>
+                        {imgIdx + 1}
+                        {" / "}
+                        {total}
+                      </span>
+                      <button
+                        type="button"
+                        aria-label="Imagen siguiente"
+                        disabled={imgIdx === total - 1}
+                        onClick={() => setImgIdx((i) => i + 1)}
+                      >
+                        &gt;
+                      </button>
+                    </div>
+                  )}
 
-                      {(isOwner || isStaff(user)) && (
-                        <div className="dialog-buttons">
-                          {isOwner && (
-                            <button
-                              type="button"
-                              onClick={() =>
-                                navigate(`/product/${product._id}/edit`)
-                              }
-                            >
-                              Editar
-                            </button>
-                          )}
-                          <button
-                            type="button"
-                            onClick={() => setConfirming(true)}
-                          >
-                            Eliminar
-                          </button>
-                        </div>
+                  <fieldset>
+                    <legend>Mas informacion</legend>
+                    <p>
+                      <span className="info-label">Descripción: </span>
+                      {product.description}
+                    </p>
+                    <p>
+                      <span className="info-label">Categoría: </span>
+                      {product.category}
+                    </p>
+                    <p>
+                      <span className="info-label">Publicado: </span>
+                      {formatDate(product.createdAt)}
+                      {product.updatedAt !== product.createdAt && (
+                        <>
+                          {" · "}
+                          <span className="info-label">Actualizado: </span>
+                          {formatDate(product.updatedAt)}
+                        </>
                       )}
-                    </>
-                  ),
-                },
-                {
-                  key: "comentarios",
-                  label: `Comentarios (${commentCount})`,
-                  content: (
-                    <CommentSection
-                      productId={product._id}
-                      user={user}
-                      setToast={setToast}
-                      onCountChange={setCommentCount}
-                    />
-                  ),
-                },
-              ]}
-            />
-          </div>
-        </div>
-      </div>
+                    </p>
+                  </fieldset>
+
+                  {(isOwner || isStaff(user)) && (
+                    <div className="dialog-buttons">
+                      {isOwner && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            navigate(`/product/${product._id}/edit`)
+                          }
+                        >
+                          Editar
+                        </button>
+                      )}
+                      <button type="button" onClick={() => setConfirming(true)}>
+                        Eliminar
+                      </button>
+                    </div>
+                  )}
+                </>
+              ),
+            },
+            {
+              key: "comentarios",
+              label: `Comentarios (${commentCount})`,
+              content: (
+                <CommentSection
+                  productId={product._id}
+                  user={user}
+                  setToast={setToast}
+                  onCountChange={setCommentCount}
+                />
+              ),
+            },
+          ]}
+        />
+      </ModalWindow>
 
       {confirming && (
-        <div className="confirm-overlay" role="dialog" aria-modal="true">
-          <div className="window confirm-window">
-            <div className="title-bar">
-              <div className="title-bar-text">Confirmar eliminación</div>
-              <div className="title-bar-controls">
-                <button
-                  type="button"
-                  aria-label="Close"
-                  onClick={() => setConfirming(false)}
-                />
-              </div>
-            </div>
-            <div className="window-body">
-              <p>
-                ¿Eliminar «{product.name}
-                »? Esta acción no se puede deshacer.
-              </p>
-              <div className="confirm-actions">
-                <button type="button" onClick={handleDelete}>
-                  Eliminar
-                </button>
-                <button type="button" onClick={() => setConfirming(false)}>
-                  Cancelar
-                </button>
-              </div>
-            </div>
+        <ModalWindow
+          title="Confirmar eliminación"
+          className="confirm-window"
+          size={320}
+          onClose={() => setConfirming(false)}
+        >
+          <p>
+            ¿Eliminar «{product.name}
+            »? Esta acción no se puede deshacer.
+          </p>
+          <div className="confirm-actions">
+            <button type="button" onClick={handleDelete}>
+              Eliminar
+            </button>
+            <button type="button" onClick={() => setConfirming(false)}>
+              Cancelar
+            </button>
           </div>
-        </div>
+        </ModalWindow>
       )}
     </>
   );

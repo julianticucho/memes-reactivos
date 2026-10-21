@@ -1,3 +1,15 @@
+/* Overlay base de los modales (ModalWindow): posicion y oscurecimiento;
+   la apariencia de la ventana la dan Window y XP.css. */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 900;
+}
+
 /* Fila de botones abajo a la derecha, como OK / Cancelar / Aplicar */
 .dialog-buttons {
   display: flex;

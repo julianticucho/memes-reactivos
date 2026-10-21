@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import type { Product } from "../types/products";
 import type { User } from "../types/users";
 import productsService from "../services/products";
 import NewProduct from "./NewProduct";
+import ModalWindow from "../components/ModalWindow";
 
 interface EditProductProps {
   user: User;
@@ -12,6 +13,7 @@ interface EditProductProps {
 
 const EditProduct = ({ user, setToast }: EditProductProps) => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -24,9 +26,25 @@ const EditProduct = ({ user, setToast }: EditProductProps) => {
       .finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <p>Cargando...</p>;
-  if (!product) return <p>Producto no encontrado</p>;
-  if (product.user !== user.id) return <p>No autorizado</p>;
+  // Los estados de carga/error van dentro de la misma ventana de diálogo
+  // que el formulario, igual que en ProductDetail.
+  if (loading || !product || product.user !== user.id) {
+    return (
+      <ModalWindow
+        title="Editar producto"
+        className="detail-window"
+        onClose={() => navigate("/")}
+      >
+        <p>
+          {loading
+            ? "Cargando..."
+            : !product
+              ? "Producto no encontrado"
+              : "No autorizado"}
+        </p>
+      </ModalWindow>
+    );
+  }
 
   return <NewProduct product={product} setToast={setToast} />;
 };
