@@ -1,7 +1,13 @@
 import mongoose from "mongoose";
 
+// Con NODE_ENV=test (npm run start:test) se usa una base de datos aparte,
+// para que los tests E2E puedan borrarla sin tocar los datos de desarrollo.
 const url =
-  process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/marketplace-beauchef";
+  process.env.NODE_ENV === "test"
+    ? process.env.MONGODB_URI_TEST ||
+      "mongodb://127.0.0.1:27017/marketplace-beauchef-test"
+    : process.env.MONGODB_URI ||
+      "mongodb://127.0.0.1:27017/marketplace-beauchef";
 mongoose.set("strictQuery", false);
 mongoose.connect(url).catch(() => {
   console.log("error conectando a mongodb");

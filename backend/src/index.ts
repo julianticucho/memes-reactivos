@@ -8,6 +8,7 @@ import usersRouter from "./controllers/users.js";
 import loginRouter from "./controllers/login.js";
 import commentsRouter from "./controllers/comments.js";
 import reviewsRouter from "./controllers/reviews.js";
+import testingRouter from "./controllers/testing.js";
 import middleware from "./middleware.js";
 
 declare global {
@@ -33,6 +34,11 @@ app.use("/api/users", usersRouter);
 app.use("/api/login", loginRouter);
 app.use("/api/comments", commentsRouter);
 app.use("/api/users", reviewsRouter);
+
+// Solo para los tests E2E: permite reiniciar la base de datos de prueba.
+if (process.env.NODE_ENV === "test") {
+  app.use("/api/testing", testingRouter);
+}
 
 const unknownEndpoint = (_req: express.Request, res: express.Response) => {
   res.status(404).send({ error: "unknown endpoint" });

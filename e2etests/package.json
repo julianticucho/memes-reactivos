@@ -1,0 +1,17 @@
+{
+  "name": "memes-reactivos-e2etests",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Tests E2E con Playwright - Marketplace Beauchef",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed",
+    "test:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.1",
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2"
+  }
+}

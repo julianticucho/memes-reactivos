@@ -9,10 +9,11 @@ deliverables, not source).
 ```
 backend/   Express 5 + Mongoose + MongoDB (ESM, tsx)
 frontend/  React 19 + Vite 7 + xp.css (Windows XP theme)
+e2etests/  Playwright E2E tests (own package.json; see e2etests/README.md)
 ```
 
 - UI = XP.css + inline styles.
-- No README, no CI, no test framework in either package.
+- No root README, no CI. Only tests: Playwright E2E in `e2etests/`.
 
 ## Dev Commands
 
@@ -92,4 +93,19 @@ No combined "start all" script. Start both terminals manually.
 
 ## Testing
 
-No test framework is configured in either package. There are no tests to run.
+No unit tests. E2E only, in `e2etests/` (Playwright, Chromium):
+
+```bash
+cd e2etests && npm install && npx playwright install chromium   # once
+cd e2etests && npm test     # needs MongoDB up and port 3001 FREE
+```
+
+- `npm test` starts its own backend via `npm run start:test` (`NODE_ENV=test`,
+  never reuses a running one) and the Vite dev server (reused if up).
+- `NODE_ENV=test` switches the DB to `MONGODB_URI_TEST` (fallback
+  `.../marketplace-beauchef-test`) and mounts `POST /api/testing/reset`, which
+  wipes users, products, comments and reviews. Every spec resets in `beforeEach`;
+  `workers: 1`.
+- Selectors: Login inputs have `data-testid="username"`/`"password"`, its error
+  `<p>` has class `error`; modals are `role="dialog"` named by their title;
+  product cards are `.product-card` / `.product-name`; toasts are `role="status"`.

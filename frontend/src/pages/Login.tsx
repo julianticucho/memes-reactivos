@@ -42,6 +42,7 @@ const Login = () => {
       <div className="window-body">
         {error && (
           <p
+            className="error"
             style={{
               color: "#f44336",
               backgroundColor: "#ffebee",
@@ -55,6 +56,7 @@ const Login = () => {
         <form className="auth-form" onSubmit={handleSubmit}>
           <input
             placeholder="Nombre de usuario"
+            data-testid="username"
             required
             autoComplete="username"
             type="text"
@@ -63,6 +65,7 @@ const Login = () => {
           />
           <input
             placeholder="Contraseña"
+            data-testid="password"
             required
             type="password"
             autoComplete="current-password"
