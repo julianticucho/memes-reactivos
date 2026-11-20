@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import type { Product } from "../types/products";
-import type { User } from "../types/users";
 import moderationService from "../services/moderation";
 import productsService from "../services/products";
 import ProductDetail from "./ProductDetail";
@@ -13,11 +12,10 @@ const formatDate = (iso: string) =>
   });
 
 interface ModerationProps {
-  user: User | null;
   setToast: (toast: { message: string; severity: "success" | "error" }) => void;
 }
 
-const Moderation = ({ user, setToast }: ModerationProps) => {
+const Moderation = ({ setToast }: ModerationProps) => {
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const openId = params.get("product");
@@ -178,7 +176,6 @@ const Moderation = ({ user, setToast }: ModerationProps) => {
       {openId && (
         <ProductDetail
           productId={openId}
-          user={user}
           setToast={setToast}
           onClose={closeDetail}
           onDeleted={removeFromList}

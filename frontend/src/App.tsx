@@ -8,8 +8,7 @@ import {
 import { useEffect, useState } from "react";
 
 import Navbar from "./components/Navbar";
-import type { User } from "./types/users";
-import authService from "./services/auth";
+import useAuthStore from "./store/authStore";
 import { isStaff } from "./utils/roles";
 
 import Home from "./pages/Home";
@@ -30,15 +29,13 @@ function App() {
     message: string;
     severity: "success" | "error";
   } | null>(null);
-  const [user, setUser] = useState<User | null>(null);
-  const [restoring, setRestoring] = useState(true);
+  const user = useAuthStore((state) => state.user);
+  const restoring = useAuthStore((state) => state.restoring);
+  const restore = useAuthStore((state) => state.restore);
 
   useEffect(() => {
-    authService
-      .restoreLogin()
-      .then(setUser)
-      .finally(() => setRestoring(false));
-  }, []);
+    void restore();
+  }, [restore]);
 
   useEffect(() => {
     if (toast) {
@@ -77,17 +74,14 @@ function App() {
           </div>
         </div>
 
-        <Navbar user={user} setUser={setUser} setToast={setToast} />
+        <Navbar setToast={setToast} />
 
         <div className="window-body">
           {restoring ? (
             <p>Cargando...</p>
           ) : (
             <Routes>
-              <Route
-                path="/"
-                element={<Home user={user} setToast={setToast} />}
-              >
+              <Route path="/" element={<Home setToast={setToast} />}>
                 <Route
                   path="product/new"
                   element={
@@ -102,7 +96,7 @@ function App() {
                   path="product/:id/edit"
                   element={
                     user ? (
-                      <EditProduct user={user} setToast={setToast} />
+                      <EditProduct setToast={setToast} />
                     ) : (
                       <Navigate to="/login" replace />
                     )
@@ -114,7 +108,7 @@ function App() {
                 path="/profile"
                 element={
                   user ? (
-                    <Profile user={user} setToast={setToast} />
+                    <Profile setToast={setToast} />
                   ) : (
                     <Navigate to="/login" replace />
                   )
@@ -122,7 +116,7 @@ function App() {
               />
               <Route
                 path="/profile/:id"
-                element={<Profile user={user} setToast={setToast} />}
+                element={<Profile setToast={setToast} />}
               />
               <Route
                 path="/login"
@@ -130,7 +124,7 @@ function App() {
                   user ? (
                     <Navigate to="/" replace />
                   ) : (
-                    <Login setUser={setUser} setToast={setToast} />
+                    <Login setToast={setToast} />
                   )
                 }
               />
@@ -148,7 +142,7 @@ function App() {
                 path="/moderation"
                 element={
                   isStaff(user) ? (
-                    <Moderation user={user} setToast={setToast} />
+                    <Moderation setToast={setToast} />
                   ) : (
                     <Navigate to="/" replace />
                   )

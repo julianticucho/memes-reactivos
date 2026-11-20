@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import type { Review, ReviewsResponse } from "../types/reviews";
-import type { User } from "../types/users";
 import reviewsService from "../services/reviews";
+import useAuthStore from "../store/authStore";
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleString("es-CL", {
@@ -12,7 +12,6 @@ const formatDate = (iso: string) =>
 
 interface ReviewSectionProps {
   profileId: string;
-  user: User | null;
   data: ReviewsResponse;
   onChanged: () => void;
   setToast: (toast: { message: string; severity: "success" | "error" }) => void;
@@ -20,11 +19,11 @@ interface ReviewSectionProps {
 
 const ReviewSection = ({
   profileId,
-  user,
   data,
   onChanged,
   setToast,
 }: ReviewSectionProps) => {
+  const user = useAuthStore((state) => state.user);
   const [text, setText] = useState("");
   const [vote, setVote] = useState<1 | -1 | null>(null);
   const [fieldError, setFieldError] = useState<string | null>(null);

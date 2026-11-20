@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
 import type { Product } from "../types/products";
-import type { User } from "../types/users";
 import productsService from "../services/products";
 import Tabs from "../components/Tabs";
 import ModalWindow from "../components/ModalWindow";
 import CommentSection from "../components/CommentSection";
 import { isStaff } from "../utils/roles";
+import useAuthStore from "../store/authStore";
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleString("es-CL", {
@@ -16,7 +16,6 @@ const formatDate = (iso: string) =>
   });
 
 interface ProductDetailProps {
-  user: User | null;
   setToast: (toast: { message: string; severity: "success" | "error" }) => void;
   productId: string;
   onClose: () => void;
@@ -24,12 +23,12 @@ interface ProductDetailProps {
 }
 
 const ProductDetail = ({
-  user,
   setToast,
   productId,
   onClose,
   onDeleted,
 }: ProductDetailProps) => {
+  const user = useAuthStore((state) => state.user);
   const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -224,7 +223,6 @@ const ProductDetail = ({
               content: (
                 <CommentSection
                   productId={product._id}
-                  user={user}
                   setToast={setToast}
                   onCountChange={setCommentCount}
                 />

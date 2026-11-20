@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import type { Product } from "../types/products";
-import type { User } from "../types/users";
 import ProductCard from "./ProductCard";
 import ProductDetail from "../pages/ProductDetail";
 
@@ -48,14 +47,12 @@ function getPageItems(totalPages: number, current: number): PageItem[] {
 
 interface ProductsExplorerProps {
   products: Product[];
-  user: User | null;
   setToast: (toast: { message: string; severity: "success" | "error" }) => void;
   onProductRemoved: (id: string) => void;
 }
 
 const ProductsExplorer = ({
   products,
-  user,
   setToast,
   onProductRemoved,
 }: ProductsExplorerProps) => {
@@ -179,7 +176,6 @@ const ProductsExplorer = ({
       {openId && (
         <ProductDetail
           productId={openId}
-          user={user}
           setToast={setToast}
           onClose={closeDetail}
           onDeleted={onProductRemoved}

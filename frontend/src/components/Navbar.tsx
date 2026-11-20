@@ -1,20 +1,18 @@
 import { Link, useNavigate } from "react-router-dom";
-import type { User } from "../types/users";
-import authService from "../services/auth";
 import { isStaff } from "../utils/roles";
+import useAuthStore from "../store/authStore";
 
 interface NavbarProps {
-  user: User | null;
-  setUser: (user: User | null) => void;
   setToast: (toast: { message: string; severity: "success" | "error" }) => void;
 }
 
-const Navbar = ({ user, setUser, setToast }: NavbarProps) => {
+const Navbar = ({ setToast }: NavbarProps) => {
+  const user = useAuthStore((state) => state.user);
+  const logout = useAuthStore((state) => state.logout);
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    authService.logout().then(() => {
-      setUser(null);
+    logout().then(() => {
       setToast({ message: "Sesión cerrada", severity: "success" });
       navigate("/");
     });

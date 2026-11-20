@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import type { Comment } from "../types/comments";
-import type { User } from "../types/users";
 import commentsService from "../services/comments";
+import useAuthStore from "../store/authStore";
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleString("es-CL", {
@@ -12,17 +12,16 @@ const formatDate = (iso: string) =>
 
 interface CommentSectionProps {
   productId: string;
-  user: User | null;
   setToast: (toast: { message: string; severity: "success" | "error" }) => void;
   onCountChange?: (count: number) => void;
 }
 
 const CommentSection = ({
   productId,
-  user,
   setToast,
   onCountChange,
 }: CommentSectionProps) => {
+  const user = useAuthStore((state) => state.user);
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const [text, setText] = useState("");

@@ -2,15 +2,14 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import authService from "../services/auth";
-import type { User } from "../types/users";
+import useAuthStore from "../store/authStore";
 
 interface LoginProps {
-  setUser: (user: User | null) => void;
   setToast: (toast: { message: string; severity: "success" | "error" }) => void;
 }
 
-const Login = ({ setUser, setToast }: LoginProps) => {
+const Login = ({ setToast }: LoginProps) => {
+  const login = useAuthStore((state) => state.login);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -20,9 +19,7 @@ const Login = ({ setUser, setToast }: LoginProps) => {
     e.preventDefault();
     setError("");
     try {
-      await authService.login({ username, password });
-      const loggedUser = await authService.restoreLogin();
-      setUser(loggedUser);
+      const loggedUser = await login({ username, password });
       setToast({
         message: `Bienvenido, ${loggedUser?.username ?? username}`,
         severity: "success",
