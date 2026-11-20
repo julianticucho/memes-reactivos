@@ -4,6 +4,7 @@ import type { Product } from "../types/products";
 import moderationService from "../services/moderation";
 import productsService from "../services/products";
 import ProductDetail from "./ProductDetail";
+import useUiStore from "../store/uiStore";
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleString("es-CL", {
@@ -11,11 +12,8 @@ const formatDate = (iso: string) =>
     timeStyle: "short",
   });
 
-interface ModerationProps {
-  setToast: (toast: { message: string; severity: "success" | "error" }) => void;
-}
-
-const Moderation = ({ setToast }: ModerationProps) => {
+const Moderation = () => {
+  const notify = useUiStore((state) => state.notify);
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const openId = params.get("product");
@@ -33,12 +31,7 @@ const Moderation = ({ setToast }: ModerationProps) => {
     moderationService
       .getPending()
       .then(setProducts)
-      .catch(() =>
-        setToast({
-          message: "No se pudo cargar la cola de moderación",
-          severity: "error",
-        }),
-      )
+      .catch(() => notify("No se pudo cargar la cola de moderación", "error"))
       .finally(() => setLoading(false));
   }, []);
 
@@ -50,14 +43,11 @@ const Moderation = ({ setToast }: ModerationProps) => {
       .approve(product._id)
       .then(() => {
         removeFromList(product._id);
-        setToast({
-          message: `«${product.name}» aprobado`,
-          severity: "success",
-        });
+        notify(`«${product.name}» aprobado`, "success");
       })
       .catch((err) => {
         const msg = err?.response?.data?.error || "Error al aprobar";
-        setToast({ message: msg, severity: "error" });
+        notify(msg, "error");
       });
   };
 
@@ -69,14 +59,11 @@ const Moderation = ({ setToast }: ModerationProps) => {
       .remove(product._id)
       .then(() => {
         removeFromList(product._id);
-        setToast({
-          message: `«${product.name}» eliminado`,
-          severity: "success",
-        });
+        notify(`«${product.name}» eliminado`, "success");
       })
       .catch((err) => {
         const msg = err?.response?.data?.error || "Error al eliminar";
-        setToast({ message: msg, severity: "error" });
+        notify(msg, "error");
       });
   };
 
@@ -176,7 +163,6 @@ const Moderation = ({ setToast }: ModerationProps) => {
       {openId && (
         <ProductDetail
           productId={openId}
-          setToast={setToast}
           onClose={closeDetail}
           onDeleted={removeFromList}
         />

@@ -3,13 +3,11 @@ import type { FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import useAuthStore from "../store/authStore";
+import useUiStore from "../store/uiStore";
 
-interface LoginProps {
-  setToast: (toast: { message: string; severity: "success" | "error" }) => void;
-}
-
-const Login = ({ setToast }: LoginProps) => {
+const Login = () => {
   const login = useAuthStore((state) => state.login);
+  const notify = useUiStore((state) => state.notify);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -20,10 +18,7 @@ const Login = ({ setToast }: LoginProps) => {
     setError("");
     try {
       const loggedUser = await login({ username, password });
-      setToast({
-        message: `Bienvenido, ${loggedUser?.username ?? username}`,
-        severity: "success",
-      });
+      notify(`Bienvenido, ${loggedUser?.username ?? username}`, "success");
       navigate("/");
     } catch (err) {
       if (axios.isAxiosError(err) && err.response?.data?.error) {

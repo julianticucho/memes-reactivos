@@ -5,10 +5,11 @@ import {
   Routes,
   useParams,
 } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import Navbar from "./components/Navbar";
 import useAuthStore from "./store/authStore";
+import useUiStore from "./store/uiStore";
 import { isStaff } from "./utils/roles";
 
 import Home from "./pages/Home";
@@ -25,10 +26,8 @@ function ProductRedirect() {
 }
 
 function App() {
-  const [toast, setToast] = useState<{
-    message: string;
-    severity: "success" | "error";
-  } | null>(null);
+  const toast = useUiStore((state) => state.toast);
+  const dismiss = useUiStore((state) => state.dismiss);
   const user = useAuthStore((state) => state.user);
   const restoring = useAuthStore((state) => state.restoring);
   const restore = useAuthStore((state) => state.restore);
@@ -36,13 +35,6 @@ function App() {
   useEffect(() => {
     void restore();
   }, [restore]);
-
-  useEffect(() => {
-    if (toast) {
-      const timer = setTimeout(() => setToast(null), 4000);
-      return () => clearTimeout(timer);
-    }
-  }, [toast]);
 
   return (
     <BrowserRouter>
@@ -56,7 +48,7 @@ function App() {
               <button
                 type="button"
                 aria-label="Close"
-                onClick={() => setToast(null)}
+                onClick={() => dismiss()}
               />
             </div>
           </div>
@@ -74,78 +66,45 @@ function App() {
           </div>
         </div>
 
-        <Navbar setToast={setToast} />
+        <Navbar />
 
         <div className="window-body">
           {restoring ? (
             <p>Cargando...</p>
           ) : (
             <Routes>
-              <Route path="/" element={<Home setToast={setToast} />}>
+              <Route path="/" element={<Home />}>
                 <Route
                   path="product/new"
                   element={
-                    user ? (
-                      <NewProduct setToast={setToast} />
-                    ) : (
-                      <Navigate to="/login" replace />
-                    )
+                    user ? <NewProduct /> : <Navigate to="/login" replace />
                   }
                 />
                 <Route
                   path="product/:id/edit"
                   element={
-                    user ? (
-                      <EditProduct setToast={setToast} />
-                    ) : (
-                      <Navigate to="/login" replace />
-                    )
+                    user ? <EditProduct /> : <Navigate to="/login" replace />
                   }
                 />
               </Route>
               <Route path="/product/:id" element={<ProductRedirect />} />
               <Route
                 path="/profile"
-                element={
-                  user ? (
-                    <Profile setToast={setToast} />
-                  ) : (
-                    <Navigate to="/login" replace />
-                  )
-                }
+                element={user ? <Profile /> : <Navigate to="/login" replace />}
               />
-              <Route
-                path="/profile/:id"
-                element={<Profile setToast={setToast} />}
-              />
+              <Route path="/profile/:id" element={<Profile />} />
               <Route
                 path="/login"
-                element={
-                  user ? (
-                    <Navigate to="/" replace />
-                  ) : (
-                    <Login setToast={setToast} />
-                  )
-                }
+                element={user ? <Navigate to="/" replace /> : <Login />}
               />
               <Route
                 path="/register"
-                element={
-                  user ? (
-                    <Navigate to="/" replace />
-                  ) : (
-                    <Register setToast={setToast} />
-                  )
-                }
+                element={user ? <Navigate to="/" replace /> : <Register />}
               />
               <Route
                 path="/moderation"
                 element={
-                  isStaff(user) ? (
-                    <Moderation setToast={setToast} />
-                  ) : (
-                    <Navigate to="/" replace />
-                  )
+                  isStaff(user) ? <Moderation /> : <Navigate to="/" replace />
                 }
               />
               <Route path="*" element={<h1>Página no encontrada</h1>} />

@@ -11,13 +11,9 @@ import Tabs from "../components/Tabs";
 import ReviewSection from "../components/ReviewSection";
 import useAuthStore from "../store/authStore";
 
-interface ProfileProps {
-  setToast: (toast: { message: string; severity: "success" | "error" }) => void;
-}
-
 const EMPTY_STATS = { upvotes: 0, downvotes: 0, score: 0, count: 0 };
 
-const Profile = ({ setToast }: ProfileProps) => {
+const Profile = () => {
   const user = useAuthStore((state) => state.user);
   const { id } = useParams<{ id: string }>();
   const profileId = id ?? user?.id ?? null;
@@ -77,14 +73,12 @@ const Profile = ({ setToast }: ProfileProps) => {
       profileId={profile.id}
       data={reviewsData}
       onChanged={reloadReviews}
-      setToast={setToast}
     />
   );
 
   const productsTab = (
     <ProductsExplorer
       products={products}
-      setToast={setToast}
       onProductRemoved={(id) =>
         setProducts((prev) => prev.filter((p) => p._id !== id))
       }

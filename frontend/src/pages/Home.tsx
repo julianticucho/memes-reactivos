@@ -3,11 +3,7 @@ import { Outlet } from "react-router-dom";
 import ProductsExplorer from "../components/ProductsExplorer";
 import useProductsStore from "../store/productsStore";
 
-interface HomeProps {
-  setToast: (toast: { message: string; severity: "success" | "error" }) => void;
-}
-
-const Home = ({ setToast }: HomeProps) => {
+const Home = () => {
   const products = useProductsStore((state) => state.products);
   const loading = useProductsStore((state) => state.loading);
   const fetchAll = useProductsStore((state) => state.fetchAll);
@@ -20,7 +16,7 @@ const Home = ({ setToast }: HomeProps) => {
 
   return (
     <>
-      <ProductsExplorer products={products} setToast={setToast} />
+      <ProductsExplorer products={products} />
       <Outlet />
     </>
   );

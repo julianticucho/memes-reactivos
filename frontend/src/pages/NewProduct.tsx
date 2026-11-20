@@ -7,6 +7,7 @@ import FileUploader from "../components/FileUploader";
 import type { UploaderFile } from "../components/FileUploader";
 import ModalWindow from "../components/ModalWindow";
 import useProductsStore from "../store/productsStore";
+import useUiStore from "../store/uiStore";
 
 const CATEGORIES = [
   "Electrónica",
@@ -46,11 +47,11 @@ const toUploaderFiles = (urls: string[]): UploaderFile[] =>
   });
 
 interface NewProductProps {
-  setToast: (toast: { message: string; severity: "success" | "error" }) => void;
   product?: Product;
 }
 
-const NewProduct = ({ setToast, product }: NewProductProps) => {
+const NewProduct = ({ product }: NewProductProps) => {
+  const notify = useUiStore((state) => state.notify);
   const addProduct = useProductsStore((state) => state.addProduct);
   const updateProduct = useProductsStore((state) => state.updateProduct);
   const removeProduct = useProductsStore((state) => state.removeProduct);
@@ -91,22 +92,21 @@ const NewProduct = ({ setToast, product }: NewProductProps) => {
           addProduct(saved);
         }
         if (product) {
-          setToast({
-            message: inReview
+          notify(
+            inReview
               ? "Producto actualizado. Tu publicación está siendo revisada."
               : "Producto actualizado",
-            severity: "success",
-          });
+            "success",
+          );
           navigate(`/product/${saved._id}`);
         } else if (inReview) {
-          setToast({
-            message:
-              "Tu publicación está siendo revisada. Se publicará cuando sea aprobada.",
-            severity: "success",
-          });
+          notify(
+            "Tu publicación está siendo revisada. Se publicará cuando sea aprobada.",
+            "success",
+          );
           navigate("/profile");
         } else {
-          setToast({ message: "Producto publicado", severity: "success" });
+          notify("Producto publicado", "success");
           navigate("/");
         }
       })
@@ -116,7 +116,7 @@ const NewProduct = ({ setToast, product }: NewProductProps) => {
           (product
             ? "Error al actualizar (¿sesión expirada?)"
             : "Error al publicar (¿sesión expirada?)");
-        setToast({ message: msg, severity: "error" });
+        notify(msg, "error");
       });
   };
 

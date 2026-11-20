@@ -6,11 +6,7 @@ import NewProduct from "./NewProduct";
 import ModalWindow from "../components/ModalWindow";
 import useAuthStore from "../store/authStore";
 
-interface EditProductProps {
-  setToast: (toast: { message: string; severity: "success" | "error" }) => void;
-}
-
-const EditProduct = ({ setToast }: EditProductProps) => {
+const EditProduct = () => {
   const user = useAuthStore((state) => state.user);
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -46,7 +42,7 @@ const EditProduct = ({ setToast }: EditProductProps) => {
     );
   }
 
-  return <NewProduct product={product} setToast={setToast} />;
+  return <NewProduct product={product} />;
 };
 
 export default EditProduct;

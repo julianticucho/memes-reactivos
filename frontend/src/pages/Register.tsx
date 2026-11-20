@@ -3,12 +3,10 @@ import type { FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import authService from "../services/auth";
+import useUiStore from "../store/uiStore";
 
-interface RegisterProps {
-  setToast: (toast: { message: string; severity: "success" | "error" }) => void;
-}
-
-const Register = ({ setToast }: RegisterProps) => {
+const Register = () => {
+  const notify = useUiStore((state) => state.notify);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,10 +27,7 @@ const Register = ({ setToast }: RegisterProps) => {
     }
     try {
       await authService.register({ username, email, password });
-      setToast({
-        message: "Cuenta creada. Inicia sesión.",
-        severity: "success",
-      });
+      notify("Cuenta creada. Inicia sesión.", "success");
       navigate("/login");
     } catch (err) {
       if (axios.isAxiosError(err) && err.response?.data?.error) {

@@ -47,13 +47,11 @@ function getPageItems(totalPages: number, current: number): PageItem[] {
 
 interface ProductsExplorerProps {
   products: Product[];
-  setToast: (toast: { message: string; severity: "success" | "error" }) => void;
   onProductRemoved?: (id: string) => void;
 }
 
 const ProductsExplorer = ({
   products,
-  setToast,
   onProductRemoved,
 }: ProductsExplorerProps) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -176,7 +174,6 @@ const ProductsExplorer = ({
       {openId && (
         <ProductDetail
           productId={openId}
-          setToast={setToast}
           onClose={closeDetail}
           onDeleted={onProductRemoved}
         />

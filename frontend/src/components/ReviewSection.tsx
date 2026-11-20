@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import type { Review, ReviewsResponse } from "../types/reviews";
 import reviewsService from "../services/reviews";
 import useAuthStore from "../store/authStore";
+import useUiStore from "../store/uiStore";
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleString("es-CL", {
@@ -14,16 +15,11 @@ interface ReviewSectionProps {
   profileId: string;
   data: ReviewsResponse;
   onChanged: () => void;
-  setToast: (toast: { message: string; severity: "success" | "error" }) => void;
 }
 
-const ReviewSection = ({
-  profileId,
-  data,
-  onChanged,
-  setToast,
-}: ReviewSectionProps) => {
+const ReviewSection = ({ profileId, data, onChanged }: ReviewSectionProps) => {
   const user = useAuthStore((state) => state.user);
+  const notify = useUiStore((state) => state.notify);
   const [text, setText] = useState("");
   const [vote, setVote] = useState<1 | -1 | null>(null);
   const [fieldError, setFieldError] = useState<string | null>(null);
@@ -49,7 +45,7 @@ const ReviewSection = ({
     fallback: string,
   ) => {
     const msg = err?.response?.data?.error || fallback;
-    setToast({ message: msg, severity: "error" });
+    notify(msg, "error");
   };
 
   const handleCreate = (e: React.FormEvent) => {
@@ -64,7 +60,7 @@ const ReviewSection = ({
       .then(() => {
         setText("");
         setVote(null);
-        setToast({ message: "Reseña publicada", severity: "success" });
+        notify("Reseña publicada", "success");
         onChanged();
       })
       .catch((err) => showError(err, "Error al publicar la reseña"));
@@ -89,7 +85,7 @@ const ReviewSection = ({
       .update(profileId, { text: editText.trim() || null, vote: editVote })
       .then(() => {
         setEditing(false);
-        setToast({ message: "Reseña actualizada", severity: "success" });
+        notify("Reseña actualizada", "success");
         onChanged();
       })
       .catch((err) => showError(err, "Error al editar la reseña"));
@@ -100,7 +96,7 @@ const ReviewSection = ({
     reviewsService
       .remove(profileId)
       .then(() => {
-        setToast({ message: "Reseña eliminada", severity: "success" });
+        notify("Reseña eliminada", "success");
         onChanged();
       })
       .catch((err) => showError(err, "Error al eliminar la reseña"));

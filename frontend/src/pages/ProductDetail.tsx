@@ -9,6 +9,7 @@ import CommentSection from "../components/CommentSection";
 import { isStaff } from "../utils/roles";
 import useAuthStore from "../store/authStore";
 import useProductsStore from "../store/productsStore";
+import useUiStore from "../store/uiStore";
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleString("es-CL", {
@@ -17,20 +18,19 @@ const formatDate = (iso: string) =>
   });
 
 interface ProductDetailProps {
-  setToast: (toast: { message: string; severity: "success" | "error" }) => void;
   productId: string;
   onClose: () => void;
   onDeleted?: (id: string) => void;
 }
 
 const ProductDetail = ({
-  setToast,
   productId,
   onClose,
   onDeleted,
 }: ProductDetailProps) => {
   const user = useAuthStore((state) => state.user);
   const removeProduct = useProductsStore((state) => state.removeProduct);
+  const notify = useUiStore((state) => state.notify);
   const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -67,14 +67,14 @@ const ProductDetail = ({
       .remove(product._id)
       .then(() => {
         removeProduct(product._id);
-        setToast({ message: "Producto eliminado", severity: "success" });
+        notify("Producto eliminado", "success");
         onDeleted?.(product._id);
         onClose();
       })
       .catch((err) => {
         const msg =
           err?.response?.data?.error || "Error al eliminar (¿sesión expirada?)";
-        setToast({ message: msg, severity: "error" });
+        notify(msg, "error");
       });
   };
 
@@ -226,7 +226,6 @@ const ProductDetail = ({
               content: (
                 <CommentSection
                   productId={product._id}
-                  setToast={setToast}
                   onCountChange={setCommentCount}
                 />
               ),

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import type { Comment } from "../types/comments";
 import commentsService from "../services/comments";
 import useAuthStore from "../store/authStore";
+import useUiStore from "../store/uiStore";
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleString("es-CL", {
@@ -12,16 +13,12 @@ const formatDate = (iso: string) =>
 
 interface CommentSectionProps {
   productId: string;
-  setToast: (toast: { message: string; severity: "success" | "error" }) => void;
   onCountChange?: (count: number) => void;
 }
 
-const CommentSection = ({
-  productId,
-  setToast,
-  onCountChange,
-}: CommentSectionProps) => {
+const CommentSection = ({ productId, onCountChange }: CommentSectionProps) => {
   const user = useAuthStore((state) => state.user);
+  const notify = useUiStore((state) => state.notify);
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const [text, setText] = useState("");
@@ -57,7 +54,7 @@ const CommentSection = ({
     fallback: string,
   ) => {
     const msg = err?.response?.data?.error || fallback;
-    setToast({ message: msg, severity: "error" });
+    notify(msg, "error");
   };
 
   const handleCreate = (e: React.FormEvent) => {
@@ -71,7 +68,7 @@ const CommentSection = ({
       .create(productId, text.trim())
       .then(() => {
         setText("");
-        setToast({ message: "Comentario publicado", severity: "success" });
+        notify("Comentario publicado", "success");
         reload();
       })
       .catch((err) => showError(err, "Error al comentar (¿sesión expirada?)"));
@@ -92,7 +89,7 @@ const CommentSection = ({
       .update(id, editText.trim())
       .then(() => {
         setEditingId(null);
-        setToast({ message: "Comentario actualizado", severity: "success" });
+        notify("Comentario actualizado", "success");
         reload();
       })
       .catch((err) => showError(err, "Error al editar el comentario"));
@@ -105,7 +102,7 @@ const CommentSection = ({
     commentsService
       .remove(id)
       .then(() => {
-        setToast({ message: "Comentario eliminado", severity: "success" });
+        notify("Comentario eliminado", "success");
         reload();
       })
       .catch((err) => showError(err, "Error al eliminar el comentario"));
