@@ -6,6 +6,7 @@ import type { Product } from "../types/products";
 import FileUploader from "../components/FileUploader";
 import type { UploaderFile } from "../components/FileUploader";
 import ModalWindow from "../components/ModalWindow";
+import useProductsStore from "../store/productsStore";
 
 const CATEGORIES = [
   "Electrónica",
@@ -50,6 +51,9 @@ interface NewProductProps {
 }
 
 const NewProduct = ({ setToast, product }: NewProductProps) => {
+  const addProduct = useProductsStore((state) => state.addProduct);
+  const updateProduct = useProductsStore((state) => state.updateProduct);
+  const removeProduct = useProductsStore((state) => state.removeProduct);
   const navigate = useNavigate();
   const [name, setName] = useState(product?.name ?? "");
   const [description, setDescription] = useState(product?.description ?? "");
@@ -77,6 +81,15 @@ const NewProduct = ({ setToast, product }: NewProductProps) => {
     request
       .then((saved) => {
         const inReview = saved.status === "pending";
+        // El catálogo del store (fuente del Home) solo contiene productos
+        // públicos: los pendientes entran cuando la moderación los aprueba.
+        if (product && inReview) {
+          removeProduct(saved._id);
+        } else if (product) {
+          updateProduct(saved);
+        } else if (!inReview) {
+          addProduct(saved);
+        }
         if (product) {
           setToast({
             message: inReview

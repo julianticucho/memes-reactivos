@@ -48,7 +48,7 @@ function getPageItems(totalPages: number, current: number): PageItem[] {
 interface ProductsExplorerProps {
   products: Product[];
   setToast: (toast: { message: string; severity: "success" | "error" }) => void;
-  onProductRemoved: (id: string) => void;
+  onProductRemoved?: (id: string) => void;
 }
 
 const ProductsExplorer = ({

@@ -1,36 +1,26 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
-import type { Product } from "../types/products";
-import productsService from "../services/products";
 import ProductsExplorer from "../components/ProductsExplorer";
+import useProductsStore from "../store/productsStore";
 
 interface HomeProps {
   setToast: (toast: { message: string; severity: "success" | "error" }) => void;
 }
 
 const Home = ({ setToast }: HomeProps) => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const products = useProductsStore((state) => state.products);
+  const loading = useProductsStore((state) => state.loading);
+  const fetchAll = useProductsStore((state) => state.fetchAll);
 
   useEffect(() => {
-    productsService
-      .getAll()
-      .then(setProducts)
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
+    if (products.length === 0) void fetchAll();
+  }, [products.length, fetchAll]);
 
-  if (loading) return <p>Cargando...</p>;
+  if (loading && products.length === 0) return <p>Cargando...</p>;
 
   return (
     <>
-      <ProductsExplorer
-        products={products}
-        setToast={setToast}
-        onProductRemoved={(id) =>
-          setProducts((prev) => prev.filter((p) => p._id !== id))
-        }
-      />
+      <ProductsExplorer products={products} setToast={setToast} />
       <Outlet />
     </>
   );

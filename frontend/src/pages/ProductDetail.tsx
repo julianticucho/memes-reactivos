@@ -8,6 +8,7 @@ import ModalWindow from "../components/ModalWindow";
 import CommentSection from "../components/CommentSection";
 import { isStaff } from "../utils/roles";
 import useAuthStore from "../store/authStore";
+import useProductsStore from "../store/productsStore";
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleString("es-CL", {
@@ -29,6 +30,7 @@ const ProductDetail = ({
   onDeleted,
 }: ProductDetailProps) => {
   const user = useAuthStore((state) => state.user);
+  const removeProduct = useProductsStore((state) => state.removeProduct);
   const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -64,6 +66,7 @@ const ProductDetail = ({
     productsService
       .remove(product._id)
       .then(() => {
+        removeProduct(product._id);
         setToast({ message: "Producto eliminado", severity: "success" });
         onDeleted?.(product._id);
         onClose();
