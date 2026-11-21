@@ -11,6 +11,8 @@ type AuthState = {
     password: string;
   }) => Promise<User | null>;
   logout: () => Promise<void>;
+  // Para refrescar datos del usuario logueado (ej: tras editar el perfil).
+  setUser: (user: User | null) => void;
 };
 
 const useAuthStore = create<AuthState>((set) => ({
@@ -33,6 +35,8 @@ const useAuthStore = create<AuthState>((set) => ({
     await authService.logout();
     set({ user: null });
   },
+
+  setUser: (user) => set({ user }),
 }));
 
 export default useAuthStore;

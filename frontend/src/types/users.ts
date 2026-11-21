@@ -5,4 +5,6 @@ export interface User {
   username: string;
   email: string;
   role: Role;
+  // Foto de perfil: data URL base64 o null (fallback /no-avatar.png).
+  avatar?: string | null;
 }

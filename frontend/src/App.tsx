@@ -93,6 +93,12 @@ function App() {
                 element={user ? <Profile /> : <Navigate to="/login" replace />}
               />
               <Route path="/profile/:id" element={<Profile />} />
+              {/* URL legacy del modal de edición (antes era una ruta):
+                  redirige al perfil; el modal se abre con ?edit=perfil */}
+              <Route
+                path="/profile/edit"
+                element={<Navigate to="/profile" replace />}
+              />
               <Route
                 path="/login"
                 element={user ? <Navigate to="/" replace /> : <Login />}

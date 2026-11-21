@@ -5,11 +5,12 @@ frontend reales y los controlan con un navegador (Chromium).
 
 ## Qué se prueba
 
-| Archivo                  | Casos                                                                                                                                                                |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `tests/auth.spec.ts`     | Login correcto e incorrecto, sesión que sobrevive a F5, logout, y acceso a rutas protegidas (`/product/new`, `/profile`, `/moderation`) con y sin sesión             |
-| `tests/products.spec.ts` | CRUD de productos: listar (y buscar), crear desde el formulario, ver el detalle (y cerrarlo con el botón atrás), editar, eliminar, y que un no-dueño no pueda editar |
-| `tests/helper.ts`        | Datos de ejemplo y funciones auxiliares: reiniciar la base, crear usuarios, iniciar sesión, crear productos por API, rellenar el formulario de producto              |
+| Archivo                  | Casos                                                                                                                                                                                                         |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tests/auth.spec.ts`     | Login correcto e incorrecto, sesión que sobrevive a F5, logout, y acceso a rutas protegidas (`/product/new`, `/profile`, `/moderation`) con y sin sesión                                                      |
+| `tests/products.spec.ts` | CRUD de productos: listar (y buscar), crear desde el formulario, ver el detalle (y cerrarlo con el botón atrás), editar, eliminar, y que un no-dueño no pueda editar                                          |
+| `tests/profile.spec.ts`  | Editar perfil: cambiar la foto (upload), cambiar el email (exige contraseña actual), errores de email duplicado/contraseña incorrecta, cambio de contraseña con re-login, y la ruta protegida `/profile/edit` |
+| `tests/helper.ts`        | Datos de ejemplo y funciones auxiliares: reiniciar la base, crear usuarios, iniciar sesión, crear productos por API, rellenar el formulario de producto                                                       |
 
 ## Base de datos de prueba
 

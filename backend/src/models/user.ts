@@ -9,6 +9,8 @@ export interface UserData {
   email: string;
   passwordHash: string;
   role: Role;
+  // Foto de perfil: data URL base64 o null (se muestra /no-avatar.png).
+  avatar?: string | null;
 }
 
 export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -22,6 +24,7 @@ const userSchema = new mongoose.Schema<UserData>({
     match: [EMAIL_REGEX, "email inválido"],
   },
   passwordHash: { type: String, required: true },
+  avatar: { type: String, default: null },
   role: { type: String, enum: ROLES, default: "user" },
 });
 
