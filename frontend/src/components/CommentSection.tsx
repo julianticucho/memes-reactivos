@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
 import type { Comment } from "../types/comments";
 import commentsService from "../services/comments";
+import reportsService from "../services/reports";
+import ReportDialog from "./ReportDialog";
+import { isStaff } from "../utils/roles";
 import useAuthStore from "../store/authStore";
 import useUiStore from "../store/uiStore";
 
@@ -10,6 +14,9 @@ const formatDate = (iso: string) =>
     dateStyle: "medium",
     timeStyle: "short",
   });
+
+const countActive = (comments: Comment[]) =>
+  comments.filter((comment) => comment.status === "active").length;
 
 interface CommentSectionProps {
   productId: string;
@@ -27,13 +34,14 @@ const CommentSection = ({ productId, onCountChange }: CommentSectionProps) => {
   const [editText, setEditText] = useState("");
   const [editError, setEditError] = useState<string | null>(null);
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
+  const [reportingId, setReportingId] = useState<string | null>(null);
 
   useEffect(() => {
     commentsService
       .getByProduct(productId)
       .then((data) => {
         setComments(data);
-        onCountChange?.(data.length);
+        onCountChange?.(countActive(data));
       })
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -44,7 +52,7 @@ const CommentSection = ({ productId, onCountChange }: CommentSectionProps) => {
       .getByProduct(productId)
       .then((data) => {
         setComments(data);
-        onCountChange?.(data.length);
+        onCountChange?.(countActive(data));
       })
       .catch(() => {});
   };
@@ -66,9 +74,14 @@ const CommentSection = ({ productId, onCountChange }: CommentSectionProps) => {
     setFieldError(null);
     commentsService
       .create(productId, text.trim())
-      .then(() => {
+      .then((saved) => {
         setText("");
-        notify("Comentario publicado", "success");
+        notify(
+          saved.status === "pending"
+            ? "Tu comentario está siendo revisado. Se publicará cuando sea aprobado."
+            : "Comentario publicado",
+          "success",
+        );
         reload();
       })
       .catch((err) => showError(err, "Error al comentar (¿sesión expirada?)"));
@@ -87,9 +100,14 @@ const CommentSection = ({ productId, onCountChange }: CommentSectionProps) => {
     }
     commentsService
       .update(id, editText.trim())
-      .then(() => {
+      .then((saved) => {
         setEditingId(null);
-        notify("Comentario actualizado", "success");
+        notify(
+          saved.status === "pending"
+            ? "Comentario actualizado. Tu comentario está siendo revisado."
+            : "Comentario actualizado",
+          "success",
+        );
         reload();
       })
       .catch((err) => showError(err, "Error al editar el comentario"));
@@ -125,6 +143,9 @@ const CommentSection = ({ productId, onCountChange }: CommentSectionProps) => {
                 <span className="comment-date">
                   {formatDate(comment.createdAt)}
                 </span>
+                {comment.status === "pending" && (
+                  <span className="pending-badge">En revisión</span>
+                )}
                 {user?.id === comment.user && (
                   <span className="comment-actions">
                     <button type="button" onClick={() => startEditing(comment)}>
@@ -135,6 +156,16 @@ const CommentSection = ({ productId, onCountChange }: CommentSectionProps) => {
                       onClick={() => setConfirmingId(comment._id)}
                     >
                       Eliminar
+                    </button>
+                  </span>
+                )}
+                {user && user.id !== comment.user && !isStaff(user) && (
+                  <span className="comment-actions">
+                    <button
+                      type="button"
+                      onClick={() => setReportingId(comment._id)}
+                    >
+                      Reportar
                     </button>
                   </span>
                 )}
@@ -187,6 +218,16 @@ const CommentSection = ({ productId, onCountChange }: CommentSectionProps) => {
           <Link to="/login">Inicia sesión</Link> para comentar.
         </p>
       )}
+
+      {reportingId &&
+        createPortal(
+          <ReportDialog
+            title="Reportar comentario"
+            onSubmit={(data) => reportsService.reportComment(reportingId, data)}
+            onClose={() => setReportingId(null)}
+          />,
+          document.body,
+        )}
 
       {confirmingId && (
         <div className="confirm-overlay" role="dialog" aria-modal="true">

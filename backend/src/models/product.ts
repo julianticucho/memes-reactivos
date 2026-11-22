@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import type { ModerationStatus } from "../moderation.js";
 
 // Con NODE_ENV=test (npm run start:test) se usa una base de datos aparte,
 // para que los tests E2E puedan borrarla sin tocar los datos de desarrollo.
@@ -13,7 +14,7 @@ mongoose.connect(url).catch(() => {
   console.log("error conectando a mongodb");
 });
 
-export type ProductStatus = "active" | "pending";
+export type ProductStatus = ModerationStatus;
 
 export interface ProductDocument extends mongoose.Document {
   name: string;

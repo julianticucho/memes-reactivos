@@ -5,8 +5,10 @@ import Product, {
 } from "../models/product.js";
 import User from "../models/user.js";
 import Comment from "../models/comment.js";
+import Report from "../models/report.js";
 import { withOptionalUser, withUser } from "../middleware.js";
-import { needsReview } from "../moderation.js";
+import { moderationStatus, needsReview } from "../moderation.js";
+import { fileReport } from "../reports.js";
 
 const router = express.Router();
 
@@ -122,9 +124,13 @@ router.get("/:id/comments", withOptionalUser, async (req, res, next) => {
     if (!product) {
       return res.status(404).json({ error: "producto no encontrado" });
     }
-    const comments = await Comment.find({ product: product._id }).sort({
-      createdAt: 1,
-    });
+    const visible = req.userId
+      ? { $or: [{ status: "active" }, { user: req.userId }] }
+      : { status: "active" };
+    const comments = await Comment.find({
+      product: product._id,
+      ...visible,
+    }).sort({ createdAt: 1 });
     res.json(comments);
   } catch (error) {
     next(error);
@@ -157,9 +163,36 @@ router.post("/:id/comments", withUser, async (req, res, next) => {
       product: product._id,
       user: user._id,
       username: user.username,
+      status: moderationStatus(text),
     });
     const savedComment = await comment.save();
     res.status(201).json(savedComment);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/:id/report", withUser, async (req, res, next) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product || product.status === "pending") {
+      return res.status(404).json({ error: "producto no encontrado" });
+    }
+    if (product.user?.toString() === req.userId) {
+      return res
+        .status(403)
+        .json({ error: "no puedes reportar tu propia publicación" });
+    }
+    const result = await fileReport(
+      "product",
+      product._id,
+      req.userId,
+      req.body,
+    );
+    if ("error" in result) {
+      return res.status(400).json({ error: result.error });
+    }
+    res.status(201).json(result.report);
   } catch (error) {
     next(error);
   }
@@ -204,6 +237,15 @@ router.delete("/:id", withUser, async (req, res, next) => {
     ) {
       return res.status(403).json({ error: "no autorizado" });
     }
+    const commentIds = await Comment.find({ product: product._id }).distinct(
+      "_id",
+    );
+    await Report.deleteMany({
+      $or: [
+        { targetType: "product", target: product._id },
+        { targetType: "comment", target: { $in: commentIds } },
+      ],
+    });
     await Comment.deleteMany({ product: product._id });
     await product.deleteOne();
     res.status(204).end();

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import type { ModerationStatus } from "../moderation.js";
 
 export interface ReviewDocument extends mongoose.Document {
   text: string | null;
@@ -6,6 +7,7 @@ export interface ReviewDocument extends mongoose.Document {
   reviewedUser: mongoose.Types.ObjectId;
   user: mongoose.Types.ObjectId;
   username: string;
+  status: ModerationStatus;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -36,6 +38,11 @@ const reviewSchema = new mongoose.Schema(
     username: {
       type: String,
       required: true,
+    },
+    status: {
+      type: String,
+      enum: ["active", "pending"],
+      default: "active",
     },
   },
   { timestamps: true },

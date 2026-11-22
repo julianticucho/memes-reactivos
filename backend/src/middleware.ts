@@ -94,6 +94,8 @@ const errorHandler = (
       res
         .status(400)
         .json({ error: "ya dejaste una reseña para este usuario" });
+    } else if (error.message.includes("targetType")) {
+      res.status(400).json({ error: "ya reportaste este contenido" });
     } else {
       const field = error.message.includes("email") ? "email" : "username";
       res.status(400).json({ error: `el ${field} ya existe` });

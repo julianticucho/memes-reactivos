@@ -1,7 +1,11 @@
 import React, { useState } from "react";
+import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
 import type { Review, ReviewsResponse } from "../types/reviews";
 import reviewsService from "../services/reviews";
+import reportsService from "../services/reports";
+import ReportDialog from "./ReportDialog";
+import { isStaff } from "../utils/roles";
 import useAuthStore from "../store/authStore";
 import useUiStore from "../store/uiStore";
 
@@ -28,6 +32,7 @@ const ReviewSection = ({ profileId, data, onChanged }: ReviewSectionProps) => {
   const [editVote, setEditVote] = useState<1 | -1 | null>(null);
   const [editError, setEditError] = useState<string | null>(null);
   const [confirming, setConfirming] = useState(false);
+  const [reportingId, setReportingId] = useState<string | null>(null);
 
   const isOwnProfile = !!user && user.id === profileId;
 
@@ -57,10 +62,15 @@ const ReviewSection = ({ profileId, data, onChanged }: ReviewSectionProps) => {
     setFieldError(null);
     reviewsService
       .create(profileId, { text: text.trim() || null, vote })
-      .then(() => {
+      .then((saved) => {
         setText("");
         setVote(null);
-        notify("Reseña publicada", "success");
+        notify(
+          saved.status === "pending"
+            ? "Tu reseña está siendo revisada. Se publicará cuando sea aprobada."
+            : "Reseña publicada",
+          "success",
+        );
         onChanged();
       })
       .catch((err) => showError(err, "Error al publicar la reseña"));
@@ -83,9 +93,14 @@ const ReviewSection = ({ profileId, data, onChanged }: ReviewSectionProps) => {
     setEditError(null);
     reviewsService
       .update(profileId, { text: editText.trim() || null, vote: editVote })
-      .then(() => {
+      .then((saved) => {
         setEditing(false);
-        notify("Reseña actualizada", "success");
+        notify(
+          saved.status === "pending"
+            ? "Reseña actualizada. Tu reseña está siendo revisada."
+            : "Reseña actualizada",
+          "success",
+        );
         onChanged();
       })
       .catch((err) => showError(err, "Error al editar la reseña"));
@@ -135,6 +150,22 @@ const ReviewSection = ({ profileId, data, onChanged }: ReviewSectionProps) => {
                 <span className="comment-date">
                   {formatDate(review.createdAt)}
                 </span>
+                {review.status === "pending" && (
+                  <span className="pending-badge">En revisión</span>
+                )}
+                {user &&
+                  review.user !== user.id &&
+                  !isStaff(user) &&
+                  review.text && (
+                    <span className="comment-actions">
+                      <button
+                        type="button"
+                        onClick={() => setReportingId(review._id)}
+                      >
+                        Reportar
+                      </button>
+                    </span>
+                  )}
               </div>
               {review.text && <p className="comment-text">{review.text}</p>}
             </li>
@@ -150,7 +181,12 @@ const ReviewSection = ({ profileId, data, onChanged }: ReviewSectionProps) => {
         <p className="empty-state">No puedes reseñar tu propio perfil.</p>
       ) : myReview && !editing ? (
         <div className="my-review">
-          <p className="info-label">Tu reseña:</p>
+          <p className="info-label">
+            Tu reseña:{" "}
+            {myReview.status === "pending" && (
+              <span className="pending-badge">En revisión</span>
+            )}
+          </p>
           <p className="comment-text">
             <span
               className={`vote-badge ${
@@ -226,6 +262,18 @@ const ReviewSection = ({ profileId, data, onChanged }: ReviewSectionProps) => {
           </div>
         </form>
       )}
+
+      {reportingId &&
+        createPortal(
+          <ReportDialog
+            title="Reportar reseña"
+            onSubmit={(data) =>
+              reportsService.reportReview(profileId, reportingId, data)
+            }
+            onClose={() => setReportingId(null)}
+          />,
+          document.body,
+        )}
 
       {confirming && (
         <div className="confirm-overlay" role="dialog" aria-modal="true">

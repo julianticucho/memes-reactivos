@@ -5,6 +5,19 @@ export interface Review {
   reviewedUser: string;
   user: string;
   username: string;
+  status: "active" | "pending";
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ModerationReview {
+  _id: string;
+  text: string | null;
+  vote: 1 | -1;
+  reviewedUser: { _id: string; username: string } | null;
+  user: string;
+  username: string;
+  status: "active" | "pending";
   createdAt: string;
   updatedAt: string;
 }

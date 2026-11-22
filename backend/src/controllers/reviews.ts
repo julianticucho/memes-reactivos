@@ -1,7 +1,10 @@
 import express from "express";
 import Review from "../models/review.js";
+import Report from "../models/report.js";
 import User from "../models/user.js";
-import { withUser } from "../middleware.js";
+import { withOptionalUser, withUser } from "../middleware.js";
+import { moderationStatus } from "../moderation.js";
+import { fileReport } from "../reports.js";
 
 const router = express.Router();
 
@@ -23,18 +26,25 @@ const normalizeText = (text: unknown): { text?: string; error?: string } => {
   return { text: text.trim() };
 };
 
-router.get("/:id/reviews", async (req, res, next) => {
+router.get("/:id/reviews", withOptionalUser, async (req, res, next) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) {
       return res.status(404).json({ error: "usuario no encontrado" });
     }
-    const reviews = await Review.find({ reviewedUser: user._id }).sort({
-      createdAt: -1,
-    });
+    const visible = req.userId
+      ? { $or: [{ status: "active" }, { user: req.userId }] }
+      : { status: "active" };
+    const reviews = await Review.find({
+      reviewedUser: user._id,
+      ...visible,
+    }).sort({ createdAt: -1 });
     let upvotes = 0;
     let downvotes = 0;
     for (const review of reviews) {
+      if (review.status === "pending") {
+        continue;
+      }
       if (review.vote === 1) {
         upvotes += 1;
       } else {
@@ -47,7 +57,7 @@ router.get("/:id/reviews", async (req, res, next) => {
         upvotes,
         downvotes,
         score: upvotes - downvotes,
-        count: reviews.length,
+        count: upvotes + downvotes,
       },
     });
   } catch (error) {
@@ -93,6 +103,7 @@ router.post("/:id/reviews", withUser, async (req, res, next) => {
       reviewedUser: reviewedUser._id,
       user: author._id,
       username: author.username,
+      status: moderationStatus(body.text ?? ""),
     });
     const savedReview = await review.save();
     res.status(201).json(savedReview);
@@ -122,12 +133,51 @@ router.put("/:id/reviews", withUser, async (req, res, next) => {
     }
     review.text = body.text ?? null;
     review.vote = vote;
+    review.status = moderationStatus(body.text ?? "");
     const updatedReview = await review.save();
     res.json(updatedReview);
   } catch (error) {
     next(error);
   }
 });
+
+router.post(
+  "/:id/reviews/:reviewId/report",
+  withUser,
+  async (req, res, next) => {
+    try {
+      const review = await Review.findOne({
+        _id: req.params.reviewId,
+        reviewedUser: req.params.id,
+      });
+      if (!review || review.status === "pending") {
+        return res.status(404).json({ error: "reseña no encontrada" });
+      }
+      if (review.user.toString() === req.userId) {
+        return res
+          .status(403)
+          .json({ error: "no puedes reportar tu propia reseña" });
+      }
+      if (!review.text) {
+        return res
+          .status(400)
+          .json({ error: "las reseñas sin texto no se pueden reportar" });
+      }
+      const result = await fileReport(
+        "review",
+        review._id,
+        req.userId,
+        req.body,
+      );
+      if ("error" in result) {
+        return res.status(400).json({ error: result.error });
+      }
+      res.status(201).json(result.report);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 router.delete("/:id/reviews", withUser, async (req, res, next) => {
   try {
@@ -140,6 +190,7 @@ router.delete("/:id/reviews", withUser, async (req, res, next) => {
         .status(404)
         .json({ error: "no dejaste una reseña para este usuario" });
     }
+    await Report.deleteMany({ targetType: "review", target: review._id });
     await review.deleteOne();
     res.status(204).end();
   } catch (error) {

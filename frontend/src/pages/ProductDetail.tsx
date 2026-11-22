@@ -6,6 +6,8 @@ import productsService from "../services/products";
 import Tabs from "../components/Tabs";
 import ModalWindow from "../components/ModalWindow";
 import CommentSection from "../components/CommentSection";
+import ReportDialog from "../components/ReportDialog";
+import reportsService from "../services/reports";
 import { isStaff } from "../utils/roles";
 import useAuthStore from "../store/authStore";
 import useProductsStore from "../store/productsStore";
@@ -35,6 +37,7 @@ const ProductDetail = ({
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [confirming, setConfirming] = useState(false);
+  const [reporting, setReporting] = useState(false);
   const [imgIdx, setImgIdx] = useState(0);
   const [activeTab, setActiveTab] = useState("publicacion");
   const [commentCount, setCommentCount] = useState(0);
@@ -95,6 +98,8 @@ const ProductDetail = ({
   }
 
   const isOwner = !!user && product.user === user.id;
+  const canManage = isOwner || isStaff(user);
+  const canReport = !!user && !canManage && product.status === "active";
   const images = product.image ?? [];
   const total = images.length;
 
@@ -200,7 +205,7 @@ const ProductDetail = ({
                     </p>
                   </fieldset>
 
-                  {(isOwner || isStaff(user)) && (
+                  {(canManage || canReport) && (
                     <div className="dialog-buttons">
                       {isOwner && (
                         <button
@@ -212,9 +217,22 @@ const ProductDetail = ({
                           Editar
                         </button>
                       )}
-                      <button type="button" onClick={() => setConfirming(true)}>
-                        Eliminar
-                      </button>
+                      {canManage && (
+                        <button
+                          type="button"
+                          onClick={() => setConfirming(true)}
+                        >
+                          Eliminar
+                        </button>
+                      )}
+                      {canReport && (
+                        <button
+                          type="button"
+                          onClick={() => setReporting(true)}
+                        >
+                          Reportar
+                        </button>
+                      )}
                     </div>
                   )}
                 </>
@@ -254,6 +272,14 @@ const ProductDetail = ({
             </button>
           </div>
         </ModalWindow>
+      )}
+
+      {reporting && (
+        <ReportDialog
+          title="Reportar publicación"
+          onSubmit={(data) => reportsService.reportProduct(product._id, data)}
+          onClose={() => setReporting(false)}
+        />
       )}
     </>,
     document.body,

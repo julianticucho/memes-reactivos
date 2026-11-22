@@ -77,7 +77,12 @@ const PATTERNS = FLAGGED_TERMS.map(
   (term) => new RegExp(`(^| )${normalize(term)}(s|es)?( |$)`),
 );
 
+export type ModerationStatus = "active" | "pending";
+
 export const needsReview = (...texts: string[]): boolean => {
   const text = normalize(texts.join(" "));
   return PATTERNS.some((pattern) => pattern.test(text));
 };
+
+export const moderationStatus = (...texts: string[]): ModerationStatus =>
+  needsReview(...texts) ? "pending" : "active";

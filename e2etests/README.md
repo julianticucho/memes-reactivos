@@ -10,7 +10,9 @@ frontend reales y los controlan con un navegador (Chromium).
 | `tests/auth.spec.ts`     | Login correcto e incorrecto, sesión que sobrevive a F5, logout, y acceso a rutas protegidas (`/product/new`, `/profile`, `/moderation`) con y sin sesión                                                      |
 | `tests/products.spec.ts` | CRUD de productos: listar (y buscar), crear desde el formulario, ver el detalle (y cerrarlo con el botón atrás), editar, eliminar, y que un no-dueño no pueda editar                                          |
 | `tests/profile.spec.ts`  | Editar perfil: cambiar la foto (upload), cambiar el email (exige contraseña actual), errores de email duplicado/contraseña incorrecta, cambio de contraseña con re-login, y la ruta protegida `/profile/edit` |
-| `tests/helper.ts`        | Datos de ejemplo y funciones auxiliares: reiniciar la base, crear usuarios, iniciar sesión, crear productos por API, rellenar el formulario de producto                                                       |
+| `tests/moderation.spec.ts` | Moderación automática: un producto, comentario o reseña con palabras moderadas queda en revisión (solo lo ve su autor); el moderador los aprueba o elimina desde el panel; el enlace Moderación solo aparece al staff |
+| `tests/reports.spec.ts`  | Reportes: reportar un producto, comentario o reseña (motivo obligatorio, sin duplicados, ni el dueño ni sin sesión, y las reseñas solo-voto no se pueden reportar); el panel agrupa los reportes y el moderador los descarta o elimina el contenido |
+| `tests/helper.ts`        | Datos de ejemplo y funciones auxiliares: reiniciar la base, crear usuarios y moderadores, iniciar sesión, crear productos, comentarios, reseñas y reportes por API, rellenar el formulario de producto, abrir el panel de moderación |
 
 ## Base de datos de prueba
 
@@ -22,7 +24,9 @@ corren contra la de desarrollo:
   `mongodb://127.0.0.1:27017/marketplace-beauchef-test`) en vez de
   `MONGODB_URI`.
 - Solo en ese modo existe `POST /api/testing/reset`, que vacía usuarios,
-  productos, comentarios y reseñas.
+  productos, comentarios, reseñas y reportes, y `POST /api/testing/users`,
+  que crea un usuario con el rol indicado (`moderator` o `admin`) para los
+  tests de moderación.
 
 ## Requisitos
 
