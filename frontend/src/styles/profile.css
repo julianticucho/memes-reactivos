@@ -45,3 +45,12 @@
 ul.profile-info {
   margin: 0 0 10px;
 }
+
+/* Estado vacío de la pestaña Favoritos: mismo estilo que el .empty-state
+   del explorador (definido en home.css), con un poco más de aire porque
+   aquí no hay barra de búsqueda encima. */
+.profile-page .empty-state {
+  padding: 24px 0;
+  text-align: center;
+  color: var(--text-muted);
+}

@@ -28,23 +28,37 @@
     1px 2px 2px 0 rgb(208 206 191 / 75%);
 }
 
-/* Encabezado de la publicacion: nombre, precio y vendedor sobre
-   el visor de imagenes. */
+/* Encabezado de la publicacion: grilla 2x2 que empareja nombre con la
+   etiqueta de favoritos (fila 1) y precio con el boton (fila 2). El
+   widget de favorito abarca ambas filas de la columna derecha. */
 .detail-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 8px;
+  align-items: start;
   margin: 2px 0 0;
 }
 
 .detail-header .detail-name {
+  grid-column: 1;
+  grid-row: 1;
   font-size: 13px;
   font-weight: 700;
   margin: 0;
 }
 
 .detail-header .detail-price {
+  grid-column: 1;
+  grid-row: 2;
   font-size: 13px;
   font-weight: 700;
   color: var(--link);
   margin: 2px 0 0;
+}
+
+.detail-header .detail-favorite {
+  grid-column: 2;
+  grid-row: 1 / span 2;
 }
 
 .detail-header .detail-seller {
@@ -131,3 +145,36 @@
   background: #fff;
   margin: 0 0 10px;
 }
+
+/* Widget de favorito del detalle: fila a la derecha del nombre/precio,
+   con la etiqueta (estrella + contador) a la izquierda y el boton "Favorito"
+   a la derecha. La estrella se rellena de amarillo al marcar; sin sesion el
+   boton queda atenuado (disabled). */
+.detail-favorite {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.detail-favorite .favorite-count {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.detail-favorite .favorite-star {
+  color: var(--text-muted);
+}
+
+.detail-favorite.is-favorited .favorite-star {
+  color: #ffd700;
+}
+
+/* El boton "Favorito" no lleva estilos propios: usa el boton clasico de
+   XP.css tal cual. */

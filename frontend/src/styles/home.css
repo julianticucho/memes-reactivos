@@ -134,6 +134,15 @@
   line-height: 1.3;
 }
 
+/* Contador de favoritos: solo aparece cuando es > 0 (ProductCard), con
+   el mismo tratamiento tipografico de las demas lineas de la etiqueta. */
+.product-card .product-favorites {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin: 2px 0 0;
+  line-height: 1.3;
+}
+
 /* ---- Paginación ---- */
 .pagination {
   display: flex;
