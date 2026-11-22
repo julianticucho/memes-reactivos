@@ -5,6 +5,7 @@ import Product, {
 } from "../models/product.js";
 import User from "../models/user.js";
 import Comment from "../models/comment.js";
+import Favorite from "../models/favorite.js";
 import { withOptionalUser, withUser } from "../middleware.js";
 import { needsReview } from "../moderation.js";
 
@@ -205,6 +206,10 @@ router.delete("/:id", withUser, async (req, res, next) => {
       return res.status(403).json({ error: "no autorizado" });
     }
     await Comment.deleteMany({ product: product._id });
+    // Los favoritos ahora son documentos con referencia al producto: se
+    // borran en cascada para no dejar filas huerfanas (el contador
+    // favoriteCount desaparece junto con el producto).
+    await Favorite.deleteMany({ product: product._id });
     await product.deleteOne();
     res.status(204).end();
   } catch (error) {

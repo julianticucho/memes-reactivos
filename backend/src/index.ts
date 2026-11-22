@@ -7,6 +7,7 @@ import moderationRouter from "./controllers/moderation.js";
 import usersRouter from "./controllers/users.js";
 import loginRouter from "./controllers/login.js";
 import commentsRouter from "./controllers/comments.js";
+import "./models/favorite.js";
 import reviewsRouter from "./controllers/reviews.js";
 import testingRouter from "./controllers/testing.js";
 import middleware from "./middleware.js";

@@ -24,6 +24,7 @@ export interface ProductDocument extends mongoose.Document {
   category: string;
   user: mongoose.Types.ObjectId | null;
   status: ProductStatus;
+  favoriteCount: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -68,6 +69,13 @@ const productSchema = new mongoose.Schema(
       type: String,
       enum: ["active", "pending"],
       default: "active",
+    },
+    // Contador desnormalizado: se incrementa/decrementa atomicamente al
+    // marcar/desmarcar un favorito (ver controllers/users.ts).
+    favoriteCount: {
+      type: Number,
+      default: 0,
+      min: 0,
     },
   },
   { timestamps: true },
