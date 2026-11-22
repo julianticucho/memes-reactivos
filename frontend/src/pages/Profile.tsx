@@ -6,6 +6,7 @@ import type { ReviewsResponse } from "../types/reviews";
 import productsService from "../services/products";
 import usersService from "../services/users";
 import reviewsService from "../services/reviews";
+import favoritesService from "../services/favorites";
 import ProductsExplorer from "../components/ProductsExplorer";
 import Tabs from "../components/Tabs";
 import ReviewSection from "../components/ReviewSection";
@@ -37,27 +38,30 @@ const Profile = () => {
   const [profile, setProfile] = useState<User | null>(id ? null : user);
   const [reviewsData, setReviewsData] = useState<ReviewsResponse | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
+  // Los favoritos son privados: solo se cargan para el perfil propio.
+  const [favorites, setFavorites] = useState<Product[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("products");
   const editOpenRef = useRef(false);
+  const loadedRef = useRef(false);
 
   useEffect(() => {
-    if (editOpen) {
-      // Abrir el modal no recarga nada: recargar aqui hace parpadear el
-      // fondo (página entera → "Cargando..." → repaint).
-      editOpenRef.current = true;
-      return;
-    }
-    const closedAfterEditing = editOpenRef.current;
-    editOpenRef.current = false;
+    const wasOpen = editOpenRef.current;
+    editOpenRef.current = editOpen;
 
     if (!profileId) return;
+
+    // Abrir el modal con datos ya cargados no recarga nada: recargar aqui
+    // hace parpadear el fondo (página entera → "Cargando..." → repaint).
+    // Pero si la página se abre DIRECTO con ?edit=... en la URL (F5 con
+    // el modal abierto), los datos aún no existen y SÍ hay que cargarlos.
+    if (editOpen && loadedRef.current) return;
 
     // Cierre del modal: refresco silencioso de SOLO el perfil, para que
     // el email/avatar editados se vean al instante (sin "Cargando..." ni
     // reset del tab activo). Los productos y reseñas no cambian al editar
     // el perfil.
-    if (closedAfterEditing) {
+    if (!editOpen && wasOpen && loadedRef.current) {
       let cancelled = false;
       usersService
         .getProfile(profileId)
@@ -70,27 +74,34 @@ const Profile = () => {
       };
     }
 
+    loadedRef.current = false;
     setLoading(true);
+    const isOwnProfile = profileId === user?.id;
     Promise.all([
       usersService.getProfile(profileId),
       reviewsService.getByUser(profileId),
+      // Tercera promesa en el mismo Promise.all: null para perfiles ajenos.
+      isOwnProfile ? favoritesService.getFavorites() : null,
     ])
-      .then(([profileData, reviews]) => {
+      .then(([profileData, reviews, favoriteProducts]) => {
         setProfile(profileData);
         setReviewsData(reviews);
+        setFavorites(favoriteProducts);
         setActiveTab("products");
-        const loadProducts =
-          profileData.id === user?.id
-            ? productsService.getMine()
-            : productsService
-                .getAll()
-                .then((all) =>
-                  all.filter((p) => p.seller === profileData.username),
-                );
+        const loadProducts = isOwnProfile
+          ? productsService.getMine()
+          : productsService
+              .getAll()
+              .then((all) =>
+                all.filter((p) => p.seller === profileData.username),
+              );
         return loadProducts.then(setProducts);
       })
       .catch(() => setProfile(null))
-      .finally(() => setLoading(false));
+      .finally(() => {
+        loadedRef.current = true;
+        setLoading(false);
+      });
   }, [profileId, editOpen]);
 
   const reloadReviews = () => {
@@ -127,6 +138,17 @@ const Profile = () => {
       onProductRemoved={(id) =>
         setProducts((prev) => prev.filter((p) => p._id !== id))
       }
+    />
+  );
+
+  const removeFavorite = (id: string) =>
+    setFavorites((prev) => (prev ? prev.filter((p) => p._id !== id) : prev));
+
+  const favoritesTab = (
+    <ProductsExplorer
+      products={favorites ?? []}
+      onProductRemoved={removeFavorite}
+      emptyMessage="Aún no tienes favoritos."
     />
   );
 
@@ -171,6 +193,17 @@ const Profile = () => {
             label: `Productos (${products.length})`,
             content: productsTab,
           },
+          // Los favoritos son privados: la pestaña solo existe en el
+          // perfil propio (el backend los rechaza para otros perfiles).
+          ...(favorites !== null
+            ? [
+                {
+                  key: "favorites",
+                  label: `Favoritos (${favorites.length})`,
+                  content: favoritesTab,
+                },
+              ]
+            : []),
           {
             key: "reviews",
             label: `Reseñas (${stats.count})`,

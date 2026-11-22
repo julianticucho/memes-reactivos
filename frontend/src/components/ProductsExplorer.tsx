@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import type { Product } from "../types/products";
 import ProductCard from "./ProductCard";
@@ -48,14 +48,22 @@ function getPageItems(totalPages: number, current: number): PageItem[] {
 interface ProductsExplorerProps {
   products: Product[];
   onProductRemoved?: (id: string) => void;
+  /** Mensaje cuando la lista viene vacía de origen (p. ej. favoritos). */
+  emptyMessage?: string;
 }
 
 const ProductsExplorer = ({
   products,
   onProductRemoved,
+  emptyMessage,
 }: ProductsExplorerProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todas");
+  // IDs únicos: dos exploradores pueden convivir en la página (Productos y
+  // Favoritos del perfil) y los htmlFor/id duplicados rompen el label.
+  const searchId = useId();
+  const sortId = useId();
+  const categoryId = useId();
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
   const [page, setPage] = useState(1);
   const [params, setParams] = useSearchParams();
@@ -89,9 +97,9 @@ const ProductsExplorer = ({
   return (
     <>
       <div className="explorer-bar">
-        <label htmlFor="search">Búsqueda:</label>
+        <label htmlFor={searchId}>Búsqueda:</label>
         <input
-          id="search"
+          id={searchId}
           type="text"
           value={searchTerm}
           onChange={(e) => {
@@ -99,18 +107,18 @@ const ProductsExplorer = ({
             setPage(1);
           }}
         />
-        <label htmlFor="sort">Orden:</label>
+        <label htmlFor={sortId}>Orden:</label>
         <select
-          id="sort"
+          id={sortId}
           value={sortOrder}
           onChange={(e) => setSortOrder(e.target.value as "newest" | "oldest")}
         >
           <option value="newest">Más recientes</option>
           <option value="oldest">Más antiguos</option>
         </select>
-        <label htmlFor="category">Filtro:</label>
+        <label htmlFor={categoryId}>Filtro:</label>
         <select
-          id="category"
+          id={categoryId}
           value={selectedCategory}
           onChange={(e) => {
             setSelectedCategory(e.target.value);
@@ -131,8 +139,12 @@ const ProductsExplorer = ({
         ))}
       </div>
 
-      {filtered.length === 0 && (
-        <p className="empty-state">No se encontraron productos.</p>
+      {products.length === 0 && emptyMessage ? (
+        <p className="empty-state">{emptyMessage}</p>
+      ) : (
+        filtered.length === 0 && (
+          <p className="empty-state">No se encontraron productos.</p>
+        )
       )}
 
       {totalPages > 1 && (

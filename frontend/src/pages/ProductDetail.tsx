@@ -6,6 +6,7 @@ import productsService from "../services/products";
 import Tabs from "../components/Tabs";
 import ModalWindow from "../components/ModalWindow";
 import CommentSection from "../components/CommentSection";
+import FavoriteButton from "../components/FavoriteButton";
 import { isStaff } from "../utils/roles";
 import useAuthStore from "../store/authStore";
 import useProductsStore from "../store/productsStore";
@@ -125,6 +126,10 @@ const ProductDetail = ({
                   <div className="detail-header">
                     <p className="detail-name">{product.name}</p>
                     <p className="detail-price">${product.price}</p>
+                    <FavoriteButton
+                      productId={product._id}
+                      initialCount={product.favoriteCount ?? 0}
+                    />
                     <p className="detail-seller">
                       <span className="info-label">Vendedor: </span>
                       {product.user ? (

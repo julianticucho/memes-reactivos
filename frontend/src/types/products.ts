@@ -8,6 +8,7 @@ export interface Product {
   category: string;
   user?: string | null;
   status: "active" | "pending";
+  favoriteCount?: number;
   createdAt: string;
   updatedAt: string;
 }
