@@ -4,5 +4,6 @@ dist/
 backend/build/
 .env
 .DS_Store
-*.log*.tar
+*.log
+*.tar
 credenciales.txt
