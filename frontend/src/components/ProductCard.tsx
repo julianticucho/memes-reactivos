@@ -20,12 +20,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
       <div className="product-card-label">
         <p className="product-name">{product.name}</p>
         <p className="product-seller">{product.seller}</p>
-        <p className="product-price">${product.price}</p>
-        {!!product.favoriteCount && (
-          <p className="product-favorites" title="Favoritos">
-            ★ {product.favoriteCount}
-          </p>
-        )}
+        <p className="product-price">
+          ${product.price}
+          {!!product.favoriteCount && (
+            <span className="product-favorites" title="Favoritos">
+              &nbsp; &nbsp; ★ {product.favoriteCount}
+            </span>
+          )}
+        </p>
         {product.status === "pending" && (
           <p className="product-pending">En revisión</p>
         )}

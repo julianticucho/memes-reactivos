@@ -40,6 +40,7 @@ const ProductDetail = ({
   const [confirming, setConfirming] = useState(false);
   const [reporting, setReporting] = useState(false);
   const [imgIdx, setImgIdx] = useState(0);
+  const [viewingImage, setViewingImage] = useState(false);
   const [activeTab, setActiveTab] = useState("publicacion");
   const [commentCount, setCommentCount] = useState(0);
 
@@ -52,6 +53,7 @@ const ProductDetail = ({
         if (cancelled) return;
         setProduct(data);
         setImgIdx(0);
+        setViewingImage(false);
         setActiveTab("publicacion");
         setCommentCount(0);
       })
@@ -153,6 +155,8 @@ const ProductDetail = ({
                         <img
                           src={images[imgIdx]}
                           alt={`${product.name} ${imgIdx + 1} de ${total}`}
+                          className="monitor-zoom"
+                          onClick={() => setViewingImage(true)}
                         />
                       ) : (
                         <span className="no-image">Sin imagen</span>
@@ -285,6 +289,21 @@ const ProductDetail = ({
           onSubmit={(data) => reportsService.reportProduct(product._id, data)}
           onClose={() => setReporting(false)}
         />
+      )}
+
+      {viewingImage && total > 0 && (
+        <ModalWindow
+          title={`${product.name} — imagen ${imgIdx + 1} de ${total}`}
+          className="image-viewer-window"
+          size={640}
+          onClose={() => setViewingImage(false)}
+        >
+          <img
+            src={images[imgIdx]}
+            alt={`${product.name} ${imgIdx + 1} de ${total}`}
+            className="image-viewer-img"
+          />
+        </ModalWindow>
       )}
     </>,
     document.body,
