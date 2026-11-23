@@ -2,6 +2,8 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import path from "path";
+import { fileURLToPath } from "url";
 import productsRouter from "./controllers/products.js";
 import moderationRouter from "./controllers/moderation.js";
 import usersRouter from "./controllers/users.js";
@@ -44,6 +46,19 @@ if (process.env.NODE_ENV === "test") {
 const unknownEndpoint = (_req: express.Request, res: express.Response) => {
   res.status(404).send({ error: "unknown endpoint" });
 };
+
+// En producción se sirve el frontend compilado (dist/) desde el backend.
+if (process.env.NODE_ENV !== "test") {
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  const distDir = path.resolve(__dirname, "../dist");
+
+  app.use(express.static(distDir));
+  // SPA fallback: cualquier ruta que no sea de la API devuelve index.html
+  app.get(/^(?!\/api).*/, (_req, res) => {
+    res.sendFile(path.join(distDir, "index.html"));
+  });
+}
+
 app.use(unknownEndpoint);
 
 app.use(middleware.errorHandler);
