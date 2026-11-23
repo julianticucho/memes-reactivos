@@ -96,6 +96,35 @@
   object-fit: contain;
 }
 
+/* La imagen del monitor es clicable: abre el visor en grande */
+.monitor-screen img.monitor-zoom {
+  cursor: zoom-in;
+}
+
+/* Visor de imagen ampliada (ventana XP aparte, sobre el detalle) */
+.image-viewer-window {
+  max-width: 640px;
+  margin: 0;
+  box-shadow: var(--shadow-window);
+}
+
+/* XP.css separa el cuerpo con margin (no padding): hay que anularlo, pero
+   dejando ~3px a los costados para que el marco (box-shadow inset del
+   .window) siga visible; con margin 0 el cuerpo tapa los bordes laterales. */
+.image-viewer-window .window-body {
+  margin: 0 3px 0;
+  padding: 0;
+  background: var(--screen);
+}
+
+.image-viewer-img {
+  display: block;
+  max-width: 100%;
+  max-height: 70vh;
+  margin: 0 auto;
+  object-fit: contain;
+}
+
 .monitor-screen .no-image {
   color: var(--screen-text);
   font-size: 11px;
