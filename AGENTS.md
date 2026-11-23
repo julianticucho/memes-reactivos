@@ -45,8 +45,8 @@ at the root once so the hook gets installed (`prepare` script). Skip the hook in
 a pinch with `git commit --no-verify`.
 
 ```bash
-cd backend && npm run seed        # DESTRUCTIVE: drops ALL users+products; default 2 users
-cd backend && npm run seed -- 5   # N users usuario_1..N (password "123"), 8 products each, users admin and moderator
+cd backend && npm run seed        # DESTRUCTIVE: drops ALL users, products, comments, reviews, favorites, reports; default 2 users
+cd backend && npm run seed -- 5   # N users usuario_1..N (password "123"), 8 products each, users admin and moderator; plus random comments, reviews and favorites (favoriteCount synced); no moderation data (everything "active", no reports)
 ```
 
 No combined "start all" script. Start both terminals manually.
