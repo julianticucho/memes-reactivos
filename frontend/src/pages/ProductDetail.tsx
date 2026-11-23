@@ -148,7 +148,7 @@ const ProductDetail = ({
                       )}
                     </p>
                   </div>
-
+                  <br />
                   <div className="monitor">
                     <div className="monitor-screen">
                       {total > 0 ? (
